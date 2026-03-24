@@ -190,6 +190,14 @@
       "description": "SENDS IMMEDIATELY."
     },
     {
+      "name": "send_email",
+      "description": "SENDS IMMEDIATELY without compose window."
+    },
+    {
+      "name": "save_as_draft",
+      "description": "Save email as draft without opening compose window."
+    },
+    {
       "name": "list_drafts",
       "description": "List drafts."
     },

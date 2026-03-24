@@ -32,13 +32,85 @@ const TOOL_FILES = [
 ];
 
 /**
+ * Strip block comments from Swift source to avoid extracting Tool() from comments.
+ * Preserves string literals (does not strip inside strings).
+ */
+function stripBlockComments(source) {
+  let result = "";
+  let i = 0;
+  let inString = false;
+  let stringKind = ""; // '"' or '"""'
+
+  while (i < source.length) {
+    // Handle string literals
+    if (!inString) {
+      if (source.slice(i, i + 3) === '"""') {
+        inString = true;
+        stringKind = '"""';
+        result += '"""';
+        i += 3;
+        continue;
+      }
+      if (source[i] === '"') {
+        inString = true;
+        stringKind = '"';
+        result += '"';
+        i++;
+        continue;
+      }
+      // Block comment start
+      if (source[i] === '/' && source[i + 1] === '*') {
+        // Find matching end, handling nested block comments
+        let depth = 1;
+        i += 2;
+        while (i < source.length && depth > 0) {
+          if (source[i] === '/' && source[i + 1] === '*') { depth++; i += 2; }
+          else if (source[i] === '*' && source[i + 1] === '/') { depth--; i += 2; }
+          else { i++; }
+        }
+        result += " "; // Replace comment with space to preserve token separation
+        continue;
+      }
+      result += source[i];
+    } else {
+      // Inside string — look for closing delimiter
+      if (stringKind === '"""' && source.slice(i, i + 3) === '"""') {
+        inString = false;
+        result += '"""';
+        i += 3;
+        continue;
+      }
+      if (stringKind === '"' && source[i] === '"') {
+        // Check for escaped quote — count consecutive preceding backslashes
+        let bs = 0;
+        let j = i - 1;
+        while (j >= 0 && source[j] === '\\') { bs++; j--; }
+        if (bs % 2 === 0) {
+          inString = false;
+        }
+      }
+      result += source[i];
+    }
+    i++;
+  }
+  return result;
+}
+
+/**
  * Extract Tool definitions from Swift source code.
  * Matches patterns like:
  *   Tool(name: "tool_name", description: "Some description...", ...)
  * Uses word-boundary check to avoid matching e.g. `SomeTool(`.
  * String-aware paren counting to handle strings containing parens.
+ *
+ * NOTE: Swift string interpolation \(expr) inside tool descriptions is not
+ * handled — parens in \() would break depth counting. Current Swift sources
+ * do not use interpolation in Tool() definitions.
  */
 function extractTools(source) {
+  // Strip block comments before extraction
+  source = stripBlockComments(source);
+
   const tools = [];
 
   // Word-boundary: Tool( not preceded by a letter/digit/underscore
@@ -80,18 +152,24 @@ function extractTools(source) {
           i += 3;
           continue;
         }
-        if (stringChar === '"' && ch === '"' && source[i - 1] !== "\\") {
-          inString = false;
+        if (stringChar === '"' && ch === '"') {
+          // Count consecutive preceding backslashes — escaped only if odd count
+          let bs = 0;
+          let j = i - 1;
+          while (j >= 0 && source[j] === '\\') { bs++; j--; }
+          if (bs % 2 === 0) {
+            inString = false;
+          }
         }
       }
       i++;
     }
     const block = source.slice(start, i);
 
-    // Skip if inside a comment (check preceding lines)
+    // Skip if on a line-commented line (// ...)
     const lineStart = source.lastIndexOf("\n", start) + 1;
     const prefix = source.slice(lineStart, start).trim();
-    if (prefix.startsWith("//") || prefix.startsWith("*")) continue;
+    if (prefix.startsWith("//")) continue;
 
     // Extract name
     const nameMatch = block.match(/name:\s*"([^"]+)"/);
@@ -109,7 +187,7 @@ function extractTools(source) {
         .map((l) => l.trim())
         .filter(Boolean)
         .join(" ")
-        .replace(/\\\s*/g, " ")  // Swift line continuation backslashes
+        .replace(/\\\n\s*/g, " ")  // Swift line continuation backslashes (\ at end of line)
         .replace(/\s+/g, " ")
         .trim();
     } else {
@@ -164,7 +242,9 @@ function main() {
           if (found) return found;
         }
       }
-    } catch {}
+    } catch (err) {
+      console.warn(`  Warning: could not read ${dir}: ${err.message}`);
+    }
     return null;
   }
 
@@ -184,7 +264,9 @@ function main() {
 
     const tools = extractTools(source);
     for (const t of tools) {
-      if (!seen.has(t.name)) {
+      if (seen.has(t.name)) {
+        console.warn(`  DUPLICATE: ${t.name} already seen, skipping`);
+      } else {
         seen.add(t.name);
         allTools.push(t);
       }
@@ -193,6 +275,12 @@ function main() {
   }
 
   console.log(`\nTotal: ${allTools.length} tools`);
+
+  // Guard against empty tool list — would produce a broken publish
+  if (allTools.length === 0) {
+    console.error("No tools extracted — aborting to prevent empty manifest.");
+    process.exit(1);
+  }
 
   // Update manifest.json
   const manifestPath = join(ROOT, "manifest.json");

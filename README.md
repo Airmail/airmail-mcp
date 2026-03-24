@@ -25,6 +25,19 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "airmail": {
       "command": "npx",
+      "args": ["-y", "airmail-mcp"]
+    }
+  }
+}
+```
+
+The auth token is read automatically from the macOS Keychain. If you set `AIRMAIL_MCP_TOKEN`, the Keychain is not accessed:
+
+```json
+{
+  "mcpServers": {
+    "airmail": {
+      "command": "npx",
       "args": ["-y", "airmail-mcp"],
       "env": {
         "AIRMAIL_MCP_TOKEN": "your-token-here"
@@ -40,28 +53,28 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 claude mcp add --transport stdio airmail -- npx -y airmail-mcp
 ```
 
-Set the token as environment variable:
+## Authentication
+
+The bridge reads the auth token automatically from the macOS Keychain — no configuration needed. When macOS prompts for Keychain access, click **Always Allow** so it won't ask again.
+
+If you set `AIRMAIL_MCP_TOKEN`, the Keychain is skipped entirely:
 
 ```bash
 export AIRMAIL_MCP_TOKEN="your-token-here"
 ```
 
-## Getting your auth token
+To find your token: open Airmail → **Preferences → MCP** → copy the **Auth Token**.
 
-1. Open Airmail
-2. Go to **Preferences → MCP**
-3. Copy the **Auth Token** shown in the settings
-
-## Tools (65)
+## Tools (68)
 
 ### Email (core)
 `list_accounts` · `list_folders` · `list_messages` · `get_message` · `list_inbox` · `list_starred` · `list_sent` · `list_trash` · `list_spam` · `search_messages` · `fetch_message_body` · `list_attachments` · `get_attachment` · `get_unread_counts` · `search_contacts` · `get_draft` · `delete_draft` · `get_message_thread` · `list_windows` · `export_eml`
 
 ### Actions
-`mark_messages` · `archive_messages` · `trash_messages` · `move_messages` · `copy_messages` · `snooze_messages` · `add_to_list` · `delete_messages` · `empty_folder` · `refresh_inbox` · `share_icloud`
+`mark_messages` · `archive_messages` · `trash_messages` · `move_messages` · `copy_messages` · `snooze_messages` · `add_to_list` · `delete_messages` · `empty_folder` · `refresh_inbox` · `enable_disable_account` · `share_icloud`
 
 ### Compose
-`compose_email` · `reply_to_message` · `forward_message` · `quick_reply` · `list_drafts`
+`compose_email` · `reply_to_message` · `forward_message` · `quick_reply` · `send_email` · `save_as_draft` · `list_drafts`
 
 ### Folders
 `create_folder` · `rename_folder` · `delete_folder`
@@ -99,7 +112,7 @@ If Airmail is not running, the bridge will attempt to launch it automatically.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AIRMAIL_MCP_TOKEN` | Auth token (optional — falls back to macOS Keychain) | — |
+| `AIRMAIL_MCP_TOKEN` | Auth token (optional — automatically read from macOS Keychain if not set) | — |
 | `AIRMAIL_MCP_PORT` | MCP server port | `9876` |
 
 ## Development
