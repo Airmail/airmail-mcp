@@ -1,0 +1,53 @@
+{
+  "name": "airmail-mcp",
+  "version": "1.0.0",
+  "mcpName": "io.github.airmail/airmail-mcp",
+  "description": "MCP server for Airmail – manage emails, calendars, contacts, and more from Claude",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "airmail-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "sync-tools": "node scripts/sync-tools.mjs",
+    "prepublishOnly": "npm run sync-tools && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "airmail",
+    "email",
+    "calendar",
+    "contacts",
+    "model-context-protocol",
+    "claude",
+    "ai",
+    "macos"
+  ],
+  "author": "Airmail <support@airmailapp.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "os": [
+    "darwin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Airmail/airmail-mcp.git"
+  },
+  "homepage": "https://airmailapp.com",
+  "bugs": {
+    "url": "https://github.com/Airmail/airmail-mcp/issues"
+  }
+}

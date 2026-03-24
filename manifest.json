@@ -1,0 +1,322 @@
+{
+  "manifest_version": "0.3",
+  "name": "airmail-mcp",
+  "display_name": "Airmail",
+  "version": "1.0.0",
+  "description": "Manage emails, calendars, contacts, and more from Claude using Airmail's MCP server.",
+  "long_description": "Airmail MCP connects Claude to the Airmail email client for macOS. Read, search, compose, and organize emails. Manage calendars and reminders. Search contacts. All operations run locally through Airmail's built-in MCP server — your data never leaves your Mac.",
+  "author": {
+    "name": "Airmail",
+    "email": "support@airmailapp.com",
+    "url": "https://airmailapp.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Airmail/airmail-mcp"
+  },
+  "homepage": "https://airmailapp.com",
+  "documentation": "https://github.com/Airmail/airmail-mcp#readme",
+  "support": "https://github.com/Airmail/airmail-mcp/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/dist/index.js"
+      ],
+      "env": {
+        "AIRMAIL_MCP_TOKEN": "${user_config.auth_token}"
+      }
+    }
+  },
+  "tools_generated": true,
+  "tools": [
+    {
+      "name": "manage_capabilities",
+      "description": "Enable/disable tool groups to manage context."
+    },
+    {
+      "name": "list_accounts",
+      "description": "List configured email accounts."
+    },
+    {
+      "name": "list_folders",
+      "description": "List folders for an account."
+    },
+    {
+      "name": "list_messages",
+      "description": "List messages in a folder (date desc)."
+    },
+    {
+      "name": "get_message",
+      "description": "Get full message: body (plain text), recipients, attachments, subject, date, labels."
+    },
+    {
+      "name": "list_inbox",
+      "description": "List inbox messages (date desc)."
+    },
+    {
+      "name": "list_starred",
+      "description": "List starred/flagged messages."
+    },
+    {
+      "name": "list_sent",
+      "description": "List sent messages."
+    },
+    {
+      "name": "list_trash",
+      "description": "List trash messages."
+    },
+    {
+      "name": "list_spam",
+      "description": "List spam/junk messages."
+    },
+    {
+      "name": "search_messages",
+      "description": "Search emails with hybrid FTS + semantic engine."
+    },
+    {
+      "name": "fetch_message_body",
+      "description": "Trigger server body download."
+    },
+    {
+      "name": "list_attachments",
+      "description": "List message attachments."
+    },
+    {
+      "name": "get_unread_counts",
+      "description": "Unread count per account inbox."
+    },
+    {
+      "name": "search_contacts",
+      "description": "Search contacts/recent senders by name or email."
+    },
+    {
+      "name": "get_draft",
+      "description": "Get draft content: body, recipients, attachments."
+    },
+    {
+      "name": "delete_draft",
+      "description": "Permanently delete a draft."
+    },
+    {
+      "name": "get_message_thread",
+      "description": "Get all messages in a conversation thread (date asc)."
+    },
+    {
+      "name": "get_attachment",
+      "description": "Get the content of a specific attachment."
+    },
+    {
+      "name": "list_windows",
+      "description": "List open Airmail windows (composers, readers)."
+    },
+    {
+      "name": "export_eml",
+      "description": "Export message as .eml (RFC 822) file saved to ~/Downloads/Airmail/ (returns file_path)."
+    },
+    {
+      "name": "semantic_search",
+      "description": "Search by meaning via vector embeddings (macOS 14+)."
+    },
+    {
+      "name": "semantic_index_status",
+      "description": "Check/trigger semantic index."
+    },
+    {
+      "name": "mark_messages",
+      "description": "Apply flags."
+    },
+    {
+      "name": "archive_messages",
+      "description": "Move messages to archive."
+    },
+    {
+      "name": "trash_messages",
+      "description": "Move messages to trash."
+    },
+    {
+      "name": "move_messages",
+      "description": "Move messages to a folder."
+    },
+    {
+      "name": "copy_messages",
+      "description": "Copy messages to a folder (originals stay)."
+    },
+    {
+      "name": "snooze_messages",
+      "description": "Snooze messages."
+    },
+    {
+      "name": "add_to_list",
+      "description": "Add messages to Todo, Memo, or Done list."
+    },
+    {
+      "name": "delete_messages",
+      "description": "Permanently delete."
+    },
+    {
+      "name": "empty_folder",
+      "description": "Empty trash or spam across all accounts."
+    },
+    {
+      "name": "refresh_inbox",
+      "description": "Fetch new emails from server."
+    },
+    {
+      "name": "compose_email",
+      "description": "Open compose window pre-filled."
+    },
+    {
+      "name": "reply_to_message",
+      "description": "Open reply window."
+    },
+    {
+      "name": "forward_message",
+      "description": "Open forward window."
+    },
+    {
+      "name": "quick_reply",
+      "description": "SENDS IMMEDIATELY."
+    },
+    {
+      "name": "list_drafts",
+      "description": "List drafts."
+    },
+    {
+      "name": "create_folder",
+      "description": "Create a new folder."
+    },
+    {
+      "name": "rename_folder",
+      "description": "Rename a folder."
+    },
+    {
+      "name": "delete_folder",
+      "description": "Delete a custom folder."
+    },
+    {
+      "name": "analyze_email_history",
+      "description": "Scan sent folder to build behavior profile (tone, contacts, topics)."
+    },
+    {
+      "name": "batch_triage_inbox",
+      "description": "Inbox messages with suggested actions (reply/archive/star/defer) and priority scores."
+    },
+    {
+      "name": "get_user_profile",
+      "description": "Get user behavior profile: reply patterns, contacts, templates."
+    },
+    {
+      "name": "update_user_profile",
+      "description": "Update profile: custom instructions, reply tone/length, add/remove templates."
+    },
+    {
+      "name": "suggest_folder",
+      "description": "Suggest folder for a message based on learned move patterns."
+    },
+    {
+      "name": "get_behavior_stats",
+      "description": "Behavior tracker stats: total actions, top sender→folder and domain rules."
+    },
+    {
+      "name": "list_calendars",
+      "description": "List calendars (IDs, titles, types)."
+    },
+    {
+      "name": "list_events",
+      "description": "List events in date range (default next 7 days)."
+    },
+    {
+      "name": "get_event",
+      "description": "Get event details: attendees, alarms, recurrence, notes."
+    },
+    {
+      "name": "create_event",
+      "description": "Create calendar event."
+    },
+    {
+      "name": "update_event",
+      "description": "Update event."
+    },
+    {
+      "name": "delete_event",
+      "description": "Delete event."
+    },
+    {
+      "name": "list_reminders",
+      "description": "List reminders."
+    },
+    {
+      "name": "create_reminder",
+      "description": "Create reminder."
+    },
+    {
+      "name": "complete_reminder",
+      "description": "Mark reminder completed/uncompleted."
+    },
+    {
+      "name": "delete_reminder",
+      "description": "Delete reminder."
+    },
+    {
+      "name": "list_contacts_book",
+      "description": "List address book contacts."
+    },
+    {
+      "name": "get_contact",
+      "description": "Get full contact details."
+    },
+    {
+      "name": "search_contacts_book",
+      "description": "Search contacts by name or email."
+    },
+    {
+      "name": "create_contact",
+      "description": "Create a contact."
+    },
+    {
+      "name": "update_contact",
+      "description": "Update contact."
+    },
+    {
+      "name": "delete_contact",
+      "description": "Delete a contact."
+    },
+    {
+      "name": "list_contact_groups",
+      "description": "List contact groups."
+    }
+  ],
+  "keywords": [
+    "email",
+    "mail",
+    "calendar",
+    "contacts",
+    "airmail",
+    "macos",
+    "productivity"
+  ],
+  "license": "MIT",
+  "user_config": {
+    "auth_token": {
+      "type": "string",
+      "title": "Auth Token",
+      "description": "Bearer token from Airmail Preferences > MCP. If not set, the bridge will try to read it from the macOS Keychain (requires user approval).",
+      "sensitive": true,
+      "required": false
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": [
+      "darwin"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "privacy_policies": []
+}
