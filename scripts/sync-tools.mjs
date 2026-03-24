@@ -12,7 +12,7 @@
  * the "tools" array in manifest.json. Run before `npm publish`.
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -35,27 +35,63 @@ const TOOL_FILES = [
  * Extract Tool definitions from Swift source code.
  * Matches patterns like:
  *   Tool(name: "tool_name", description: "Some description...", ...)
- * Handles multi-line descriptions by accumulating until we find the name+description pair.
+ * Uses word-boundary check to avoid matching e.g. `SomeTool(`.
+ * String-aware paren counting to handle strings containing parens.
  */
 function extractTools(source) {
   const tools = [];
 
-  // Match Tool( with name: "..." and description: "..."
-  // The regex handles multi-line Tool(...) blocks
-  const toolBlockRegex = /Tool\s*\(/g;
+  // Word-boundary: Tool( not preceded by a letter/digit/underscore
+  const toolBlockRegex = /(?<![a-zA-Z0-9_])Tool\s*\(/g;
   let match;
 
   while ((match = toolBlockRegex.exec(source)) !== null) {
     const start = match.index;
-    // Find the matching closing paren — handle nested parens
+    // Find the matching closing paren — handle nested parens and strings
     let depth = 1;
     let i = start + match[0].length;
+    let inString = false;
+    let stringChar = "";
+
     while (i < source.length && depth > 0) {
-      if (source[i] === "(") depth++;
-      else if (source[i] === ")") depth--;
+      const ch = source[i];
+
+      // Handle string literals (skip parens inside strings)
+      if (!inString) {
+        if (ch === '"') {
+          // Check for triple-quote """
+          if (source.slice(i, i + 3) === '"""') {
+            inString = true;
+            stringChar = '"""';
+            i += 3;
+            continue;
+          }
+          inString = true;
+          stringChar = '"';
+          i++;
+          continue;
+        }
+        if (ch === "(") depth++;
+        else if (ch === ")") depth--;
+      } else {
+        // Inside string — look for closing delimiter
+        if (stringChar === '"""' && source.slice(i, i + 3) === '"""') {
+          inString = false;
+          i += 3;
+          continue;
+        }
+        if (stringChar === '"' && ch === '"' && source[i - 1] !== "\\") {
+          inString = false;
+        }
+      }
       i++;
     }
     const block = source.slice(start, i);
+
+    // Skip if inside a comment (check preceding lines)
+    const lineStart = source.lastIndexOf("\n", start) + 1;
+    const prefix = source.slice(lineStart, start).trim();
+    if (prefix.startsWith("//") || prefix.startsWith("*")) continue;
 
     // Extract name
     const nameMatch = block.match(/name:\s*"([^"]+)"/);
@@ -88,8 +124,6 @@ function extractTools(source) {
     }
 
     // Take only the first sentence for the manifest (keep it concise).
-    // If the first sentence is too short (e.g. description starts with special formatting),
-    // fall back to the full description truncated at 120 chars.
     let shortDesc = description.split(/\.\s/)[0].replace(/\.$/, "");
     if (shortDesc.length < 5) {
       shortDesc = description.length > 120 ? description.slice(0, 117) + "..." : description;
@@ -106,6 +140,12 @@ function main() {
   const swiftDir =
     process.argv[2] ||
     join(ROOT, "..", "airmailmac", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP");
+
+  if (!existsSync(swiftDir)) {
+    console.error(`Swift source directory not found: ${swiftDir}`);
+    console.error("Pass the path as an argument: node scripts/sync-tools.mjs /path/to/MCP");
+    process.exit(1);
+  }
 
   console.log(`Reading Swift sources from: ${swiftDir}`);
 
@@ -136,9 +176,23 @@ function main() {
 
   // Update manifest.json
   const manifestPath = join(ROOT, "manifest.json");
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+  } catch (err) {
+    console.error(`Failed to read manifest.json: ${err.message}`);
+    process.exit(1);
+  }
+
   manifest.tools = allTools;
-  writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf-8");
+
+  try {
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf-8");
+  } catch (err) {
+    console.error(`Failed to write manifest.json: ${err.message}`);
+    process.exit(1);
+  }
+
   console.log(`Updated ${manifestPath}`);
 }
 

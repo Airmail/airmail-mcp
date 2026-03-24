@@ -2,7 +2,7 @@
   "name": "airmail-mcp",
   "version": "1.0.0",
   "mcpName": "io.github.airmail/airmail-mcp",
-  "description": "MCP server for Airmail – manage emails, calendars, contacts, and more from Claude",
+  "description": "Manage emails, calendars, contacts, and more from Claude using Airmail's MCP server.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -10,7 +10,10 @@
     "airmail-mcp": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "manifest.json",
+    "logo.png",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",

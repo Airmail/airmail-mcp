@@ -12,12 +12,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Airmail/airmail-mcp"
+    "url": "https://github.com/Airmail/airmail-mcp.git"
   },
   "homepage": "https://airmailapp.com",
   "documentation": "https://github.com/Airmail/airmail-mcp#readme",
   "support": "https://github.com/Airmail/airmail-mcp/issues",
-  "icon": "icon.png",
+  "icon": "logo.png",
   "server": {
     "type": "node",
     "entry_point": "dist/index.js",
@@ -115,7 +115,7 @@
     },
     {
       "name": "export_eml",
-      "description": "Export message as .eml (RFC 822) file saved to ~/Downloads/Airmail/ (returns file_path)."
+      "description": "Export message as .eml (RFC 822) file saved to disk (returns file_path)."
     },
     {
       "name": "semantic_search",
@@ -164,6 +164,10 @@
     {
       "name": "refresh_inbox",
       "description": "Fetch new emails from server."
+    },
+    {
+      "name": "share_icloud",
+      "description": "Upload a file to iCloud Drive and return a public share link."
     },
     {
       "name": "compose_email",
@@ -318,5 +322,7 @@
       "node": ">=18.0.0"
     }
   },
-  "privacy_policies": []
+  "privacy_policies": [
+    "https://airmailapp.com/privacy"
+  ]
 }

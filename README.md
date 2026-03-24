@@ -14,7 +14,7 @@ This is a lightweight bridge that connects Claude Desktop and Claude Code to Air
 
 ### Claude Desktop (MCPB extension)
 
-Download the latest `.mcpb` file from [Releases](https://github.com/Airmail/airmail-mcp/releases) and double-click to install. Claude Desktop will prompt for your auth token (found in Airmail Preferences → MCP).
+Install from the [Claude MCP Directory](https://claude.ai/mcp) or download the latest `.mcpb` file from [Releases](https://github.com/Airmail/airmail-mcp/releases) and double-click to install.
 
 ### Claude Desktop (manual)
 
@@ -52,16 +52,16 @@ export AIRMAIL_MCP_TOKEN="your-token-here"
 2. Go to **Preferences → MCP**
 3. Copy the **Auth Token** shown in the settings
 
-## Tools (63)
+## Tools (65)
 
 ### Email (core)
-`list_accounts` · `list_folders` · `list_messages` · `get_message` · `list_inbox` · `list_starred` · `list_sent` · `list_trash` · `list_spam` · `search_messages` · `fetch_message_body` · `list_attachments` · `get_attachment` · `get_unread_counts` · `search_contacts` · `get_draft` · `delete_draft` · `get_message_thread` · `list_windows` · `export_eml` · `list_drafts`
+`list_accounts` · `list_folders` · `list_messages` · `get_message` · `list_inbox` · `list_starred` · `list_sent` · `list_trash` · `list_spam` · `search_messages` · `fetch_message_body` · `list_attachments` · `get_attachment` · `get_unread_counts` · `search_contacts` · `get_draft` · `delete_draft` · `get_message_thread` · `list_windows` · `export_eml`
 
 ### Actions
-`mark_messages` · `archive_messages` · `trash_messages` · `move_messages` · `copy_messages` · `snooze_messages` · `add_to_list` · `delete_messages` · `empty_folder` · `refresh_inbox`
+`mark_messages` · `archive_messages` · `trash_messages` · `move_messages` · `copy_messages` · `snooze_messages` · `add_to_list` · `delete_messages` · `empty_folder` · `refresh_inbox` · `share_icloud`
 
 ### Compose
-`compose_email` · `reply_to_message` · `forward_message` · `quick_reply`
+`compose_email` · `reply_to_message` · `forward_message` · `quick_reply` · `list_drafts`
 
 ### Folders
 `create_folder` · `rename_folder` · `delete_folder`
@@ -99,7 +99,7 @@ If Airmail is not running, the bridge will attempt to launch it automatically.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AIRMAIL_MCP_TOKEN` | Auth token (required) | — |
+| `AIRMAIL_MCP_TOKEN` | Auth token (optional — falls back to macOS Keychain) | — |
 | `AIRMAIL_MCP_PORT` | MCP server port | `9876` |
 
 ## Development
@@ -109,6 +109,18 @@ git clone https://github.com/Airmail/airmail-mcp.git
 cd airmail-mcp
 npm install
 npm run build
+```
+
+### Sync tools from Airmail source
+
+```bash
+npm run sync-tools          # reads Swift source, updates manifest.json
+```
+
+### Build .mcpb extension
+
+```bash
+npx @anthropic-ai/mcpb pack .
 ```
 
 ## License
