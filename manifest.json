@@ -39,7 +39,7 @@
     },
     {
       "name": "list_accounts",
-      "description": "List configured email accounts."
+      "description": "List email accounts."
     },
     {
       "name": "list_folders",
@@ -164,6 +164,10 @@
     {
       "name": "refresh_inbox",
       "description": "Fetch new emails from server."
+    },
+    {
+      "name": "enable_disable_account",
+      "description": "Enable or disable an email account."
     },
     {
       "name": "share_icloud",

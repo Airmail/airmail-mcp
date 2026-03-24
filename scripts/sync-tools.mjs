@@ -12,7 +12,7 @@
  * the "tools" array in manifest.json. Run before `npm publish`.
  */
 
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -152,8 +152,28 @@ function main() {
   const allTools = [];
   const seen = new Set();
 
+  // Recursively find each tool file in swiftDir and subdirectories
+  function findFile(dir, name) {
+    const direct = join(dir, name);
+    if (existsSync(direct)) return direct;
+    try {
+      for (const entry of readdirSync(dir)) {
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) {
+          const found = findFile(full, name);
+          if (found) return found;
+        }
+      }
+    } catch {}
+    return null;
+  }
+
   for (const file of TOOL_FILES) {
-    const path = join(swiftDir, file);
+    const path = findFile(swiftDir, file);
+    if (!path) {
+      console.warn(`  SKIP ${file}: not found in ${swiftDir} (recursive)`);
+      continue;
+    }
     let source;
     try {
       source = readFileSync(path, "utf-8");
