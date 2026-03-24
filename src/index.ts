@@ -29,6 +29,34 @@ const MAX_LAUNCH_RETRIES = 5;
 const REQUEST_TIMEOUT_MS = 120_000;
 const MAX_STDIN_BUFFER = 10 * 1024 * 1024; // 10 MB — matches server limit
 
+/** Resolve parent process code signing Team ID (macOS only). */
+let parentCodeSignTeamID: string | null = null;
+function resolveParentCodeSign(): void {
+  try {
+    const ppid = process.ppid;
+    // Get parent executable path
+    const parentPath = execSync(`ps -p ${ppid} -o comm=`, { encoding: "utf-8" }).trim();
+    if (!parentPath) return;
+
+    // Walk up to find .app bundle (if any)
+    let appPath = parentPath;
+    const appIdx = parentPath.indexOf(".app/");
+    if (appIdx !== -1) {
+      appPath = parentPath.slice(0, appIdx + 4);
+    }
+
+    // Extract code signing Team ID
+    const sigInfo = execSync(`codesign -dv --verbose=2 "${appPath}" 2>&1`, { encoding: "utf-8" });
+    const match = sigInfo.match(/TeamIdentifier=(\S+)/);
+    if (match && match[1] !== "not" && match[1] !== "not set") {
+      parentCodeSignTeamID = match[1];
+      log(`Parent code sign: Team ID ${parentCodeSignTeamID}`);
+    }
+  } catch {
+    // Not code-signed or codesign not available — leave as null
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -200,6 +228,9 @@ function forward(body: string, clientName: string, token: string): Promise<strin
         reqHeaders += `Authorization: Bearer ${token}\r\n`;
       }
       reqHeaders += `X-MCP-Client: ${clientName}\r\n`;
+      if (parentCodeSignTeamID) {
+        reqHeaders += `X-MCP-CodeSign: ${parentCodeSignTeamID}\r\n`;
+      }
       reqHeaders += `\r\n`;
 
       // Single atomic write to avoid backpressure issues
@@ -283,6 +314,7 @@ async function main() {
     log("Airmail MCP is macOS-only.");
     process.exit(1);
   }
+  resolveParentCodeSign();
   if (!currentToken) {
     log("Warning: no auth token. Set AIRMAIL_MCP_TOKEN or enable MCP in Airmail Preferences.");
   }
