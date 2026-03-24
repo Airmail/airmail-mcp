@@ -23,7 +23,7 @@ const AIRMAIL_HOST = "127.0.0.1";
 const AIRMAIL_PORT = (() => {
   const p = parseInt(process.env.AIRMAIL_MCP_PORT ?? "9876", 10);
   if (isNaN(p) || p < 1 || p > 65535) {
-    process.stderr.write(`[airmail-mcp] Invalid AIRMAIL_MCP_PORT: "${process.env.AIRMAIL_MCP_PORT}". Must be 1-65535.\n`);
+    console.error(`[airmail-mcp] Invalid AIRMAIL_MCP_PORT: "${process.env.AIRMAIL_MCP_PORT}". Must be 1-65535.`);
     process.exit(1);
   }
   return p;
@@ -84,7 +84,7 @@ function resolveParentCodeSign(): void {
 // ---------------------------------------------------------------------------
 
 function log(msg: string) {
-  process.stderr.write(`[airmail-mcp] ${msg}\n`);
+  console.error(`[airmail-mcp] ${msg}`);
 }
 
 /** Sanitize a string for use in an HTTP header value (strip CR/LF). */
