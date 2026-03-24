@@ -1,0 +1,11 @@
+node_modules
+src
+scripts
+.idea
+.git
+*.ts
+*.map
+*.tgz
+*.mcpb
+tsconfig.json
+.gitignore
