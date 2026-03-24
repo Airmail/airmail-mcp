@@ -29,13 +29,8 @@ const AIRMAIL_PORT = (() => {
   return p;
 })();
 const AIRMAIL_PATH = "/mcp";
+const VERSION = "1.0.0";
 let currentToken = "";
-if (process.env.AIRMAIL_MCP_TOKEN) {
-  currentToken = process.env.AIRMAIL_MCP_TOKEN;
-  log("Auth token provided via AIRMAIL_MCP_TOKEN environment variable.");
-} else {
-  currentToken = readTokenFromKeychain();
-}
 
 const RETRY_DELAY_MS = 2000;
 const MAX_LAUNCH_RETRIES = 5;
@@ -412,22 +407,34 @@ async function processMessage(line: string): Promise<void> {
 }
 
 async function main() {
+  log(`airmail-mcp v${VERSION} starting (Node.js ${process.version}, pid ${process.pid})`);
+
   if (process.platform !== "darwin") {
     log("Airmail MCP is macOS-only.");
     process.exit(1);
   }
-  resolveParentCodeSign();
+
+  // Resolve auth token — done inside main() so stderr is captured by Claude Desktop
+  if (process.env.AIRMAIL_MCP_TOKEN) {
+    currentToken = process.env.AIRMAIL_MCP_TOKEN;
+    log("Auth token provided via AIRMAIL_MCP_TOKEN environment variable.");
+  } else {
+    log("AIRMAIL_MCP_TOKEN not set, trying macOS Keychain...");
+    currentToken = readTokenFromKeychain();
+  }
+
   if (!currentToken) {
     log(
-      "Warning: no auth token found. To authenticate:\n" +
+      "WARNING: no auth token found. Requests will fail with 401.\n" +
       "  1. Open Airmail \u2192 Preferences \u2192 MCP and copy the Auth Token\n" +
       "  2. Set it as: export AIRMAIL_MCP_TOKEN=\"your-token-here\"\n" +
       "  Or approve the macOS Keychain prompt when it appears."
     );
   }
 
+  resolveParentCodeSign();
   await ensureAirmailRunning();
-  log(`Bridge ready \u2014 Airmail MCP at ${AIRMAIL_HOST}:${AIRMAIL_PORT}`);
+  log(`Bridge ready \u2014 Airmail MCP at ${AIRMAIL_HOST}:${AIRMAIL_PORT} (token: ${currentToken ? "present" : "MISSING"})`);
 
   // Handle stdout errors (broken pipe)
   process.stdout.on("error", (err) => {
