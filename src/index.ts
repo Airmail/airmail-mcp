@@ -13,6 +13,7 @@
  */
 
 import { execFileSync } from "child_process";
+import { writeSync } from "fs";
 import * as net from "net";
 
 // ---------------------------------------------------------------------------
@@ -23,7 +24,7 @@ const AIRMAIL_HOST = "127.0.0.1";
 const AIRMAIL_PORT = (() => {
   const p = parseInt(process.env.AIRMAIL_MCP_PORT ?? "9876", 10);
   if (isNaN(p) || p < 1 || p > 65535) {
-    console.error(`[airmail-mcp] Invalid AIRMAIL_MCP_PORT: "${process.env.AIRMAIL_MCP_PORT}". Must be 1-65535.`);
+    try { writeSync(2, `[airmail-mcp] Invalid AIRMAIL_MCP_PORT: "${process.env.AIRMAIL_MCP_PORT}". Must be 1-65535.\n`); } catch { /* fd closed */ }
     process.exit(1);
   }
   return p;
@@ -84,7 +85,9 @@ function resolveParentCodeSign(): void {
 // ---------------------------------------------------------------------------
 
 function log(msg: string) {
-  console.error(`[airmail-mcp] ${msg}`);
+  // writeSync on fd 2 (stderr) — guaranteed synchronous, no buffering,
+  // survives process.exit() and crash. Works with Claude Desktop log capture.
+  try { writeSync(2, `[airmail-mcp] ${msg}\n`); } catch { /* fd closed */ }
 }
 
 /** Sanitize a string for use in an HTTP header value (strip CR/LF). */
