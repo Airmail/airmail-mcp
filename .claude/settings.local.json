@@ -17,7 +17,12 @@
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
       "Bash(npm version:*)",
-      "Bash(./scripts/release.sh:*)"
+      "Bash(./scripts/release.sh:*)",
+      "WebFetch(domain:developers.openai.com)",
+      "WebFetch(domain:geminicli.com)",
+      "mcp__airmail__list_accounts",
+      "Bash(npx -y airmail-mcp --help)",
+      "Bash(kill:*)"
     ]
   }
 }
