@@ -2,7 +2,7 @@
 
 MCP server for [Airmail](https://airmailapp.com) — manage emails, calendars, contacts, and more from Claude.
 
-This is a lightweight bridge that connects Claude Desktop and Claude Code to Airmail's built-in MCP server. All operations run locally on your Mac — your data never leaves your machine.
+This is a lightweight bridge that connects Claude Desktop and Claude Code to Airmail's built-in MCP server. The bridge connects locally to Airmail on your Mac. Data retrieved by AI tools is processed by your chosen AI provider.
 
 ## Requirements
 
