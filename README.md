@@ -50,19 +50,19 @@ The auth token is read automatically from the macOS Keychain. If you set `AIRMAI
 ### Claude Code
 
 ```bash
-claude mcp add --transport stdio airmail -- npx -y airmail-mcp
+claude mcp remove airmail && claude mcp add --transport stdio airmail -- npx -y airmail-mcp
 ```
 
 ### Gemini CLI
 
 ```bash
-gemini mcp add airmail npx -- -y airmail-mcp
+gemini mcp remove airmail && gemini mcp add airmail npx -- -y airmail-mcp
 ```
 
 ### Codex CLI
 
 ```bash
-codex mcp add airmail -- npx -y airmail-mcp
+codex mcp remove airmail && codex mcp add airmail -- npx -y airmail-mcp
 ```
 
 ## Authentication
