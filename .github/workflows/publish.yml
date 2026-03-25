@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   publish:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
@@ -19,13 +19,11 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
-      - run: npm install -g npm@latest
-
       - run: npm ci
 
       - run: npm run build
 
-      - run: npm publish --access public --ignore-scripts
+      - run: npm publish --access public --provenance --ignore-scripts
 
       - name: Build MCPB bundle
         run: npx @anthropic-ai/mcpb pack .

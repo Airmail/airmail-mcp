@@ -53,10 +53,11 @@ function discoverToolFiles(dir) {
 }
 
 /**
- * Strip block comments from Swift source to avoid extracting Tool() from comments.
+ * Strip comments (block and line) from Swift source to avoid
+ * extracting Tool() or description:/name: from commented-out code.
  * Preserves string literals (does not strip inside strings).
  */
-function stripBlockComments(source) {
+function stripComments(source) {
   let result = "";
   let i = 0;
   let inString = false;
@@ -77,6 +78,11 @@ function stripBlockComments(source) {
         stringKind = '"';
         result += '"';
         i++;
+        continue;
+      }
+      // Line comment — strip to end of line
+      if (source[i] === '/' && source[i + 1] === '/') {
+        while (i < source.length && source[i] !== '\n') i++;
         continue;
       }
       // Block comment start
@@ -130,7 +136,7 @@ function stripBlockComments(source) {
  */
 function extractTools(source) {
   // Strip block comments before extraction
-  source = stripBlockComments(source);
+  source = stripComments(source);
 
   const tools = [];
 
@@ -201,7 +207,7 @@ function extractTools(source) {
     let description;
 
     // Try triple-quote first (Swift multi-line string)
-    const tripleMatch = block.match(/description:\s*"""\n([\s\S]*?)"""/);
+    const tripleMatch = block.match(/description:\s*"""\s*\r?\n([\s\S]*?)"""/);
     if (tripleMatch) {
       description = tripleMatch[1]
         .split("\n")

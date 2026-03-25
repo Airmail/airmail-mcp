@@ -13,8 +13,10 @@
  */
 
 import { execFileSync, spawnSync } from "child_process";
-import { writeSync } from "fs";
+import { readFileSync, writeSync } from "fs";
 import * as net from "net";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -30,7 +32,12 @@ const AIRMAIL_PORT = (() => {
   return p;
 })();
 const AIRMAIL_PATH = "/mcp";
-const VERSION = "1.0.0";
+const VERSION = (() => {
+  try {
+    const pkg = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "package.json"), "utf-8"));
+    return pkg.version ?? "0.0.0";
+  } catch { return "0.0.0"; }
+})();
 let currentToken = "";
 
 const RETRY_DELAY_MS = 2000;
@@ -302,7 +309,7 @@ function forward(body: string, clientName: string, token: string, hasId: boolean
       reqHeaders += `Connection: close\r\n`;
       reqHeaders += `User-Agent: airmail-mcp/1.0\r\n`;
       if (token) {
-        reqHeaders += `Authorization: Bearer ${token}\r\n`;
+        reqHeaders += `Authorization: Bearer ${sanitizeHeaderValue(token)}\r\n`;
       }
       reqHeaders += `X-MCP-Client: ${safeClient}\r\n`;
       if (parentCodeSignTeamID) {
@@ -510,7 +517,22 @@ async function main() {
               for (const queued of pendingAfterInit) { enqueue(queued); }
               pendingAfterInit = [];
             })
-            .catch((err) => log(`Initialize error: ${err}`));
+            .catch((err) => {
+              log(`Initialize error: ${err}`);
+              // Send error responses for queued requests so clients don't hang
+              for (const queued of pendingAfterInit) {
+                try {
+                  const q = JSON.parse(queued);
+                  if (q.id !== undefined) {
+                    process.stdout.write(JSON.stringify({
+                      jsonrpc: "2.0", id: q.id,
+                      error: { code: -32002, message: "Server failed to initialize" },
+                    }) + "\n");
+                  }
+                } catch { /* not valid JSON, skip */ }
+              }
+              pendingAfterInit = [];
+            });
           inflight.add(p);
           p.finally(() => {
             inflight.delete(p);
