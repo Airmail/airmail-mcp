@@ -424,12 +424,20 @@ async function main() {
     process.exit(1);
   }
 
-  // Resolve auth token — done inside main() so stderr is captured by Claude Desktop
-  if (process.env.AIRMAIL_MCP_TOKEN) {
-    currentToken = process.env.AIRMAIL_MCP_TOKEN;
-    log("Auth token provided via AIRMAIL_MCP_TOKEN environment variable.");
+  // Resolve auth token — done inside main() so logs are captured
+  const envToken = (process.env.AIRMAIL_MCP_TOKEN ?? "").trim();
+  // Skip env var if empty or unresolved template placeholder
+  const isValidEnvToken = envToken.length > 0
+    && !envToken.startsWith("${")
+    && envToken !== "undefined"
+    && envToken !== "null";
+
+  if (isValidEnvToken) {
+    currentToken = envToken;
+    log(`Auth token provided via AIRMAIL_MCP_TOKEN (${envToken.length} chars).`);
   } else {
-    log("AIRMAIL_MCP_TOKEN not set, trying macOS Keychain...");
+    if (envToken) log(`AIRMAIL_MCP_TOKEN ignored (placeholder: "${envToken.slice(0, 20)}...").`);
+    log("Trying macOS Keychain...");
     currentToken = readTokenFromKeychain();
   }
 
