@@ -23,7 +23,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm publish --access public --provenance --ignore-scripts
+      - run: npm publish --access public --ignore-scripts
 
       - name: Build MCPB bundle
         run: npx @anthropic-ai/mcpb pack .
