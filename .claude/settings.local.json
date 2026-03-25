@@ -24,7 +24,12 @@
       "Bash(npx -y airmail-mcp --help)",
       "Bash(kill:*)",
       "mcp__airmail__manage_capabilities",
-      "Bash(npm run sync-tools:*)"
+      "Bash(npm run sync-tools:*)",
+      "Bash(python3:*)",
+      "Bash(for url in \"https://airmailapp.com\" \"https://claude.ai/mcp\" \"https://github.com/Airmail/airmail-mcp/releases\")",
+      "Bash(do echo -n \"$url -> \")",
+      "Bash(curl:*)",
+      "Bash(done)"
     ]
   }
 }
