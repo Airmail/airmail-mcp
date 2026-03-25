@@ -371,6 +371,10 @@
       "description": "Check/trigger semantic index."
     },
     {
+      "name": "get_navigation_link",
+      "description": "Get an airmail:// deep link to navigate the user to a specific part of Airmail."
+    },
+    {
       "name": "list_rules",
       "description": "List all email rules with name, guid, enabled, conditions/actions summary, direction."
     },

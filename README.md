@@ -122,7 +122,7 @@ export AIRMAIL_MCP_TOKEN="your-token-here"
 
 To find your token: open Airmail → **Preferences → MCP** → copy the **Auth Token**.
 
-## Tools (97)
+## Tools (98)
 
 ### Email (core)
 `list_accounts` · `list_folders` · `list_messages` · `get_message` · `list_inbox` · `list_starred` · `list_sent` · `list_trash` · `list_spam` · `search_messages` · `fetch_message_body` · `list_attachments` · `get_attachment` · `get_unread_counts` · `search_contacts` · `get_draft` · `delete_draft` · `get_message_thread` · `list_windows` · `export_eml`
