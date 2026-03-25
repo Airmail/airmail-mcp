@@ -22,7 +22,8 @@
       "WebFetch(domain:geminicli.com)",
       "mcp__airmail__list_accounts",
       "Bash(npx -y airmail-mcp --help)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "mcp__airmail__manage_capabilities"
     ]
   }
 }
