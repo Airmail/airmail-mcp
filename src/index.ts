@@ -12,7 +12,7 @@
  * collect all data before the FIN arrives.
  */
 
-import { execFileSync } from "child_process";
+import { execFileSync, spawnSync } from "child_process";
 import { writeSync } from "fs";
 import * as net from "net";
 
@@ -54,28 +54,18 @@ function resolveParentCodeSign(): void {
       appPath = parentPath.slice(0, appIdx + 4);
     }
 
-    // Extract code signing Team ID — execFileSync avoids shell injection
-    const sigInfo = execFileSync("codesign", ["-dv", "--verbose=2", appPath], {
+    // codesign writes everything to stderr — use spawnSync to capture it
+    const result = spawnSync("codesign", ["-dv", "--verbose=2", appPath], {
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],
     });
-    // codesign writes to stderr; try both stdout and stderr
-    const match = sigInfo.match(/TeamIdentifier=(\S+)/);
+    const output = (result.stdout || "") + (result.stderr || "");
+    const match = output.match(/TeamIdentifier=(\S+)/);
     if (match && match[1] !== "not" && match[1] !== "not set") {
       parentCodeSignTeamID = match[1];
       log(`Parent code sign: Team ID ${parentCodeSignTeamID}`);
     }
-  } catch (err) {
-    // codesign outputs to stderr — capture from the error object
-    if (err && typeof err === "object" && "stderr" in err) {
-      const stderr = String((err as { stderr: unknown }).stderr);
-      const match = stderr.match(/TeamIdentifier=(\S+)/);
-      if (match && match[1] !== "not" && match[1] !== "not set") {
-        parentCodeSignTeamID = match[1];
-        log(`Parent code sign: Team ID ${parentCodeSignTeamID}`);
-        return;
-      }
-    }
+  } catch {
     // Not code-signed or codesign not available — leave as null
   }
 }
