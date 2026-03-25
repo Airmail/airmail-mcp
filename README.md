@@ -65,6 +65,51 @@ gemini mcp remove airmail && gemini mcp add airmail npx -- -y airmail-mcp
 codex mcp remove airmail && codex mcp add airmail -- npx -y airmail-mcp
 ```
 
+### Cursor
+
+Add to `.cursor/mcp.json` in your project (or global settings):
+
+```json
+{
+  "mcpServers": {
+    "airmail": {
+      "command": "npx",
+      "args": ["-y", "airmail-mcp"]
+    }
+  }
+}
+```
+
+### Windsurf
+
+Add to `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "airmail": {
+      "command": "npx",
+      "args": ["-y", "airmail-mcp"]
+    }
+  }
+}
+```
+
+### VS Code (GitHub Copilot)
+
+Add to `.vscode/mcp.json` in your project:
+
+```json
+{
+  "servers": {
+    "airmail": {
+      "command": "npx",
+      "args": ["-y", "airmail-mcp"]
+    }
+  }
+}
+```
+
 ## Authentication
 
 The bridge reads the auth token automatically from the macOS Keychain — no configuration needed. When macOS prompts for Keychain access, click **Always Allow** so it won't ask again.
