@@ -6,7 +6,7 @@ on:
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   publish:
@@ -26,3 +26,11 @@ jobs:
       - run: npm run build
 
       - run: npm publish --access public --ignore-scripts
+
+      - name: Build MCPB bundle
+        run: npx @anthropic-ai/mcpb pack .
+
+      - name: Upload MCPB to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" *.mcpb --clobber
