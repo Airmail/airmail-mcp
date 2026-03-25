@@ -194,6 +194,23 @@ Tools are organized into capability groups that can be enabled or disabled at ru
 
 To enable all groups, ask the AI to call `manage_capabilities` with `enable: ["preferences", "rules", "lists", "smartfolders", "signatures", "aliases", "accountsettings"]`.
 
+## Deep links
+
+MCP tool responses include `airmail://` deep links that open Airmail directly to the relevant content.
+
+| Command | URL | Description |
+|---------|-----|-------------|
+| `message` | `airmail://message?mail=...&messageid=...` | Select message in main window |
+| `open` | `airmail://open?mail=...&messageid=...` | Open message in reader window |
+| `compose` | `airmail://compose?to=...&subject=...` | Open composer with pre-filled content |
+| `reply` | `airmail://reply?mail=...&messageid=...` | Reply to a message |
+| `draft` | `airmail://draft?mail=...&messageid=...` | Open draft in composer |
+| `archive` | `airmail://archive?mail=...&messageid=...` | Archive a message |
+| `delete` | `airmail://delete?mail=...&messageid=...` | Move message to trash |
+| `view` | `airmail://view?mail=...&folder=...` | Navigate to account/folder |
+| `attachment` | `airmail://attachment?mail=...&messageid=...&index=0` | Open an attachment |
+| `settings` | `airmail://settings?pref=mcp_server` | Open Preferences pane |
+
 ## How it works
 
 ```

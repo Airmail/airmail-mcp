@@ -44,6 +44,12 @@ Two independent access control layers:
 
 Dispatch uses chain-of-responsibility: `AMZMCPToolRouter.dispatch()` tries each module's `handle(name:arguments:)` in sequence. First non-nil result wins.
 
+## Deep links
+
+MCP tools return `airmail://` URLs in responses. These open Airmail to the relevant content (message, composer, folder, attachment, settings). Deep link builders live in `AMZMCPBridge.swift`. Full reference in the Airmail source at `SwiftCore/MCP/docs/DEEPLINKS.md`.
+
+Commands: `message`, `open`, `compose`, `reply`, `draft`, `archive`, `delete`, `view`, `attachment`, `settings`, `send`.
+
 ## Key details
 
 - `prepublishOnly` runs `sync-tools` which needs local Swift sources — CI uses `--ignore-scripts` to skip it
