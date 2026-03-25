@@ -65,7 +65,7 @@ export AIRMAIL_MCP_TOKEN="your-token-here"
 
 To find your token: open Airmail → **Preferences → MCP** → copy the **Auth Token**.
 
-## Tools (68)
+## Tools (89)
 
 ### Email (core)
 `list_accounts` · `list_folders` · `list_messages` · `get_message` · `list_inbox` · `list_starred` · `list_sent` · `list_trash` · `list_spam` · `search_messages` · `fetch_message_body` · `list_attachments` · `get_attachment` · `get_unread_counts` · `search_contacts` · `get_draft` · `delete_draft` · `get_message_thread` · `list_windows` · `export_eml`
@@ -90,6 +90,21 @@ To find your token: open Airmail → **Preferences → MCP** → copy the **Auth
 
 ### Contacts
 `list_contacts_book` · `get_contact` · `search_contacts_book` · `create_contact` · `update_contact` · `delete_contact` · `list_contact_groups`
+
+### VIP & Blocked Lists
+`list_vips` · `add_vip` · `remove_vip` · `list_blocked` · `add_blocked` · `remove_blocked`
+
+### Rules
+`list_rules` · `get_rule` · `create_rule` · `delete_rule` · `toggle_rule`
+
+### Signatures
+`list_signatures` · `create_signature` · `update_signature` · `delete_signature`
+
+### Smart Folders
+`list_smart_folders` · `create_smart_folder` · `update_smart_folder` · `delete_smart_folder`
+
+### Preferences
+`get_preferences` · `set_preferences`
 
 ### Meta
 `manage_capabilities` — enable/disable tool groups to reduce context usage
