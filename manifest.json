@@ -27,7 +27,8 @@
         "${__dirname}/dist/index.js"
       ],
       "env": {
-        "AIRMAIL_MCP_TOKEN": "${user_config.auth_token}"
+        "AIRMAIL_MCP_TOKEN": "${user_config.auth_token}",
+        "AIRMAIL_MCP_PORT": "${user_config.port}"
       }
     }
   },
@@ -323,6 +324,13 @@
       "description": "Bearer token from Airmail Preferences > MCP. If not set, the bridge will try to read it from the macOS Keychain (requires user approval).",
       "sensitive": true,
       "required": false
+    },
+    "port": {
+      "type": "string",
+      "title": "MCP Server Port",
+      "description": "Port number for Airmail's local MCP server. Only change if you modified the default port in Airmail.",
+      "required": false,
+      "default": "9876"
     }
   },
   "compatibility": {

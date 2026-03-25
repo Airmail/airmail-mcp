@@ -13,7 +13,9 @@
  */
 
 import { execFileSync } from "child_process";
-import { writeSync } from "fs";
+import { appendFileSync, writeSync } from "fs";
+import { homedir } from "os";
+import { join } from "path";
 import * as net from "net";
 
 // ---------------------------------------------------------------------------
@@ -84,10 +86,15 @@ function resolveParentCodeSign(): void {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/** Log file path — ~/Library/Logs/airmail-mcp.log */
+const LOG_FILE = join(homedir(), "Library", "Logs", "airmail-mcp.log");
+
 function log(msg: string) {
-  // writeSync on fd 2 (stderr) — guaranteed synchronous, no buffering,
-  // survives process.exit() and crash. Works with Claude Desktop log capture.
-  try { writeSync(2, `[airmail-mcp] ${msg}\n`); } catch { /* fd closed */ }
+  const line = `${new Date().toISOString()} [airmail-mcp] ${msg}\n`;
+  // stderr (works in CLI / Claude Code; may not work in Claude Desktop built-in Node.js)
+  try { writeSync(2, line); } catch { /* fd closed or unavailable */ }
+  // File log (always works — readable at ~/Library/Logs/airmail-mcp.log)
+  try { appendFileSync(LOG_FILE, line); } catch { /* disk error */ }
 }
 
 /** Sanitize a string for use in an HTTP header value (strip CR/LF). */
