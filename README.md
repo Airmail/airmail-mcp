@@ -178,20 +178,19 @@ Tools are organized into capability groups that can be enabled or disabled at ru
 
 | Group | Tools | Default |
 |-------|-------|---------|
-| mail | Email read, actions, compose | Always on |
-| profile | User profile, triage, behavior stats | On |
-| folders | Folder CRUD | On |
-| semantic | Semantic search, index status | On |
-| calendar | Calendar events, reminders | On |
-| contacts | Address book | On |
-| preferences | App preferences | On |
-| rules | Email rules | On |
-| lists | VIP & blocked senders | On |
-| smartfolders | Smart folder CRUD | On |
-| signatures | Email signatures | On |
-| aliases | Email aliases | On |
-| accountsettings | Per-account settings, vacation | On |
-
+| mail | read, action, compose | Always on |
+| profile | user profile & behavior | On |
+| folders | folder create/rename/delete | On |
+| semantic | semantic search & index | On |
+| calendar | calendar & reminder | On |
+| contacts | address book | On |
+| preferences | app preferences read/write | On |
+| rules | email rules CRUD | On |
+| lists | VIP & blocked sender lists | On |
+| smartfolders | smart folder CRUD | On |
+| signatures | email signature CRUD | On |
+| aliases | email alias CRUD | On |
+| accountsettings | per-account settings & vacation | On |
 To enable all groups, ask the AI to call `manage_capabilities` with `enable: ["preferences", "rules", "lists", "smartfolders", "signatures", "aliases", "accountsettings"]`.
 
 ## Deep links

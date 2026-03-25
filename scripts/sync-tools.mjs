@@ -308,6 +308,55 @@ function main() {
   }
 
   console.log(`Updated ${manifestPath}`);
+
+  // Extract capability groups from AMZMCPToolRouter.swift
+  const routerPath = toolFiles.find(f => f.name === "AMZMCPToolRouter.swift")?.path;
+  if (routerPath) {
+    const routerSource = readFileSync(routerPath, "utf-8");
+    const groupRegex = /case\s+(\w+)\s+\/\/\s*(.+)/g;
+    const groups = [];
+    let gm;
+    while ((gm = groupRegex.exec(routerSource)) !== null) {
+      groups.push({ name: gm[1], description: gm[2].trim() });
+    }
+
+    if (groups.length > 0) {
+      // Update README.md tool groups table
+      const readmePath = join(ROOT, "README.md");
+      try {
+        let readme = readFileSync(readmePath, "utf-8");
+        const tableHeader = "| Group | Tools | Default |\n|-------|-------|---------|";
+        const tableRows = groups.map(g => {
+          const def = g.name === "mail" ? "Always on" : "On";
+          return `| ${g.name} | ${g.description.replace(/\s*tools?\s*(\(core\))?/i, "").trim() || g.description} | ${def} |`;
+        }).join("\n");
+        const newTable = `${tableHeader}\n${tableRows}`;
+
+        // Replace existing table between header and the "To enable" paragraph
+        const tableStart = readme.indexOf("| Group | Tools | Default |");
+        if (tableStart !== -1) {
+          const toEnableLine = readme.indexOf("\nTo enable all groups", tableStart);
+          if (toEnableLine !== -1) {
+            readme = readme.slice(0, tableStart) + newTable + "\n" + readme.slice(toEnableLine + 1);
+            writeFileSync(readmePath, readme, "utf-8");
+            console.log(`Updated README.md tool groups (${groups.length} groups)`);
+          }
+        }
+      } catch (err) {
+        console.warn(`Could not update README.md: ${err.message}`);
+      }
+
+      // Update tool count in README
+      try {
+        let readme = readFileSync(readmePath, "utf-8");
+        readme = readme.replace(/## Tools \(\d+\)/, `## Tools (${allTools.length})`);
+        writeFileSync(readmePath, readme, "utf-8");
+        console.log(`Updated README.md tool count to ${allTools.length}`);
+      } catch (err) {
+        console.warn(`Could not update tool count: ${err.message}`);
+      }
+    }
+  }
 }
 
 main();
