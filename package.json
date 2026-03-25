@@ -1,6 +1,6 @@
 {
   "name": "airmail-mcp",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "mcpName": "io.github.airmail/airmail-mcp",
   "description": "Manage emails, calendars, contacts, and more from Claude using Airmail's MCP server.",
   "main": "dist/index.js",
