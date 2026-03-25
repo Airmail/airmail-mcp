@@ -1,8 +1,8 @@
 # Airmail MCP
 
-MCP server for [Airmail](https://airmailapp.com) — manage emails, calendars, contacts, and more from Claude.
+MCP server for [Airmail](https://airmailapp.com) — manage emails, calendars, contacts, and more from AI assistants.
 
-This is a lightweight bridge that connects Claude Desktop and Claude Code to Airmail's built-in MCP server. The bridge connects locally to Airmail on your Mac. Data retrieved by AI tools is processed by your chosen AI provider.
+This is a lightweight bridge that connects AI clients to Airmail's built-in MCP server. The bridge connects locally to Airmail on your Mac. Data retrieved by AI tools is processed by your chosen AI provider.
 
 ## Requirements
 
@@ -51,6 +51,18 @@ The auth token is read automatically from the macOS Keychain. If you set `AIRMAI
 
 ```bash
 claude mcp add --transport stdio airmail -- npx -y airmail-mcp
+```
+
+### Gemini CLI
+
+```bash
+gemini mcp add airmail npx -- -y airmail-mcp
+```
+
+### Codex CLI
+
+```bash
+codex mcp add airmail -- npx -y airmail-mcp
 ```
 
 ## Authentication
@@ -112,7 +124,7 @@ To find your token: open Airmail → **Preferences → MCP** → copy the **Auth
 ## How it works
 
 ```
-Claude ←stdio→ airmail-mcp (Node.js) ←HTTP→ Airmail.app (localhost:9876)
+AI Client ←stdio→ airmail-mcp (Node.js) ←HTTP→ Airmail.app (localhost:9876)
 ```
 
 This package is a thin transport bridge. All tool logic runs inside Airmail's native Swift MCP server. The bridge:
