@@ -23,7 +23,8 @@
       "mcp__airmail__list_accounts",
       "Bash(npx -y airmail-mcp --help)",
       "Bash(kill:*)",
-      "mcp__airmail__manage_capabilities"
+      "mcp__airmail__manage_capabilities",
+      "Bash(npm run sync-tools:*)"
     ]
   }
 }

@@ -19,22 +19,38 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 
-// Swift source files containing tool definitions
-const TOOL_FILES = [
-  "AMZMCPToolRouter.swift",    // manage_capabilities
-  "AMZMCPReadTools.swift",     // read + semantic tools
-  "AMZMCPActionTools.swift",   // action tools
-  "AMZMCPComposeTools.swift",  // compose tools
-  "AMZMCPFolderTools.swift",   // folder tools
-  "AMZMCPProfileTools.swift",  // profile tools
-  "AMZMCPCalendarTools.swift", // calendar + reminder tools
-  "AMZMCPContactTools.swift",  // contact tools
-  "AMZMCPListsTools.swift",    // lists tools
-  "AMZMCPPreferenceTools.swift", // preference tools
-  "AMZMCPRulesTools.swift",    // rules tools
-  "AMZMCPSignatureTools.swift", // signature tools
-  "AMZMCPSmartFolderTools.swift", // smart folder tools
-];
+/**
+ * Discover all Swift tool files dynamically.
+ * Matches AMZMCPToolRouter.swift and any AMZMCP*Tools.swift files.
+ */
+function discoverToolFiles(dir) {
+  const files = [];
+  function walk(d) {
+    try {
+      for (const entry of readdirSync(d)) {
+        const full = join(d, entry);
+        if (statSync(full).isDirectory()) {
+          walk(full);
+        } else if (
+          entry === "AMZMCPToolRouter.swift" ||
+          (entry.startsWith("AMZMCP") && entry.endsWith("Tools.swift"))
+        ) {
+          files.push({ name: entry, path: full });
+        }
+      }
+    } catch (err) {
+      console.warn(`  Warning: could not read ${d}: ${err.message}`);
+    }
+  }
+  walk(dir);
+  // Sort: ToolRouter first, then alphabetical
+  files.sort((a, b) => {
+    if (a.name === "AMZMCPToolRouter.swift") return -1;
+    if (b.name === "AMZMCPToolRouter.swift") return 1;
+    return a.name.localeCompare(b.name);
+  });
+  return files;
+}
 
 /**
  * Strip block comments from Swift source to avoid extracting Tool() from comments.
@@ -235,30 +251,9 @@ function main() {
   const allTools = [];
   const seen = new Set();
 
-  // Recursively find each tool file in swiftDir and subdirectories
-  function findFile(dir, name) {
-    const direct = join(dir, name);
-    if (existsSync(direct)) return direct;
-    try {
-      for (const entry of readdirSync(dir)) {
-        const full = join(dir, entry);
-        if (statSync(full).isDirectory()) {
-          const found = findFile(full, name);
-          if (found) return found;
-        }
-      }
-    } catch (err) {
-      console.warn(`  Warning: could not read ${dir}: ${err.message}`);
-    }
-    return null;
-  }
+  const toolFiles = discoverToolFiles(swiftDir);
 
-  for (const file of TOOL_FILES) {
-    const path = findFile(swiftDir, file);
-    if (!path) {
-      console.warn(`  SKIP ${file}: not found in ${swiftDir} (recursive)`);
-      continue;
-    }
+  for (const { name: file, path } of toolFiles) {
     let source;
     try {
       source = readFileSync(path, "utf-8");

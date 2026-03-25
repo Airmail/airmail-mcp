@@ -39,6 +39,250 @@
       "description": "Enable/disable tool groups to manage context."
     },
     {
+      "name": "get_account_settings",
+      "description": "Get per-account settings."
+    },
+    {
+      "name": "update_account_settings",
+      "description": "Update per-account settings."
+    },
+    {
+      "name": "get_vacation_settings",
+      "description": "Get out-of-office / vacation auto-reply settings for an account."
+    },
+    {
+      "name": "set_vacation_settings",
+      "description": "Set out-of-office / vacation auto-reply settings for an account."
+    },
+    {
+      "name": "mark_messages",
+      "description": "Apply flags."
+    },
+    {
+      "name": "archive_messages",
+      "description": "Move messages to archive."
+    },
+    {
+      "name": "trash_messages",
+      "description": "Move messages to trash."
+    },
+    {
+      "name": "move_messages",
+      "description": "Move messages to a folder."
+    },
+    {
+      "name": "copy_messages",
+      "description": "Copy messages to a folder (originals stay)."
+    },
+    {
+      "name": "snooze_messages",
+      "description": "Snooze messages."
+    },
+    {
+      "name": "add_to_list",
+      "description": "Add messages to Todo, Memo, or Done list."
+    },
+    {
+      "name": "delete_messages",
+      "description": "Permanently delete."
+    },
+    {
+      "name": "empty_folder",
+      "description": "Empty trash or spam across all accounts."
+    },
+    {
+      "name": "refresh_inbox",
+      "description": "Fetch new emails from server."
+    },
+    {
+      "name": "enable_disable_account",
+      "description": "Enable or disable an email account."
+    },
+    {
+      "name": "share_icloud",
+      "description": "Upload a file to iCloud Drive and return a public share link."
+    },
+    {
+      "name": "list_aliases",
+      "description": "List email aliases for accounts."
+    },
+    {
+      "name": "create_alias",
+      "description": "Create a new email alias for an account."
+    },
+    {
+      "name": "update_alias",
+      "description": "Update an existing alias."
+    },
+    {
+      "name": "delete_alias",
+      "description": "Delete an alias from an account."
+    },
+    {
+      "name": "list_calendars",
+      "description": "List calendars (IDs, titles, types)."
+    },
+    {
+      "name": "list_events",
+      "description": "List events in date range (default next 7 days)."
+    },
+    {
+      "name": "get_event",
+      "description": "Get event details: attendees, alarms, recurrence, notes."
+    },
+    {
+      "name": "create_event",
+      "description": "Create calendar event."
+    },
+    {
+      "name": "update_event",
+      "description": "Update event."
+    },
+    {
+      "name": "delete_event",
+      "description": "Delete event."
+    },
+    {
+      "name": "list_reminders",
+      "description": "List reminders."
+    },
+    {
+      "name": "create_reminder",
+      "description": "Create reminder."
+    },
+    {
+      "name": "complete_reminder",
+      "description": "Mark reminder completed/uncompleted."
+    },
+    {
+      "name": "delete_reminder",
+      "description": "Delete reminder."
+    },
+    {
+      "name": "compose_email",
+      "description": "Open compose window pre-filled."
+    },
+    {
+      "name": "reply_to_message",
+      "description": "Open reply window."
+    },
+    {
+      "name": "forward_message",
+      "description": "Open forward window."
+    },
+    {
+      "name": "quick_reply",
+      "description": "SENDS IMMEDIATELY."
+    },
+    {
+      "name": "send_email",
+      "description": "SENDS IMMEDIATELY without compose window."
+    },
+    {
+      "name": "save_as_draft",
+      "description": "Save email as draft without opening compose window."
+    },
+    {
+      "name": "list_drafts",
+      "description": "List drafts."
+    },
+    {
+      "name": "list_contacts_book",
+      "description": "List address book contacts."
+    },
+    {
+      "name": "get_contact",
+      "description": "Get full contact details."
+    },
+    {
+      "name": "search_contacts_book",
+      "description": "Search contacts by name or email."
+    },
+    {
+      "name": "create_contact",
+      "description": "Create a contact."
+    },
+    {
+      "name": "update_contact",
+      "description": "Update contact."
+    },
+    {
+      "name": "delete_contact",
+      "description": "Delete a contact."
+    },
+    {
+      "name": "list_contact_groups",
+      "description": "List contact groups."
+    },
+    {
+      "name": "create_folder",
+      "description": "Create a new folder."
+    },
+    {
+      "name": "rename_folder",
+      "description": "Rename a folder."
+    },
+    {
+      "name": "delete_folder",
+      "description": "Delete a custom folder."
+    },
+    {
+      "name": "list_vips",
+      "description": "List VIP senders."
+    },
+    {
+      "name": "add_vip",
+      "description": "Add a sender to VIP list."
+    },
+    {
+      "name": "remove_vip",
+      "description": "Remove a sender from VIP list."
+    },
+    {
+      "name": "list_blocked",
+      "description": "List blocked senders."
+    },
+    {
+      "name": "add_blocked",
+      "description": "Block a sender."
+    },
+    {
+      "name": "remove_blocked",
+      "description": "Unblock a sender."
+    },
+    {
+      "name": "get_preferences",
+      "description": "Read app preferences."
+    },
+    {
+      "name": "set_preferences",
+      "description": "Modify app preferences."
+    },
+    {
+      "name": "analyze_email_history",
+      "description": "Scan sent folder to build behavior profile (tone, contacts, topics)."
+    },
+    {
+      "name": "batch_triage_inbox",
+      "description": "Inbox messages with suggested actions (reply/archive/star/defer) and priority scores."
+    },
+    {
+      "name": "get_user_profile",
+      "description": "Get user behavior profile: reply patterns, contacts, templates."
+    },
+    {
+      "name": "update_user_profile",
+      "description": "Update profile: custom instructions, reply tone/length, add/remove templates."
+    },
+    {
+      "name": "suggest_folder",
+      "description": "Suggest folder for a message based on learned move patterns."
+    },
+    {
+      "name": "get_behavior_stats",
+      "description": "Behavior tracker stats: total actions, top sender→folder and domain rules."
+    },
+    {
       "name": "list_accounts",
       "description": "List email accounts."
     },
@@ -125,218 +369,6 @@
     {
       "name": "semantic_index_status",
       "description": "Check/trigger semantic index."
-    },
-    {
-      "name": "mark_messages",
-      "description": "Apply flags."
-    },
-    {
-      "name": "archive_messages",
-      "description": "Move messages to archive."
-    },
-    {
-      "name": "trash_messages",
-      "description": "Move messages to trash."
-    },
-    {
-      "name": "move_messages",
-      "description": "Move messages to a folder."
-    },
-    {
-      "name": "copy_messages",
-      "description": "Copy messages to a folder (originals stay)."
-    },
-    {
-      "name": "snooze_messages",
-      "description": "Snooze messages."
-    },
-    {
-      "name": "add_to_list",
-      "description": "Add messages to Todo, Memo, or Done list."
-    },
-    {
-      "name": "delete_messages",
-      "description": "Permanently delete."
-    },
-    {
-      "name": "empty_folder",
-      "description": "Empty trash or spam across all accounts."
-    },
-    {
-      "name": "refresh_inbox",
-      "description": "Fetch new emails from server."
-    },
-    {
-      "name": "enable_disable_account",
-      "description": "Enable or disable an email account."
-    },
-    {
-      "name": "share_icloud",
-      "description": "Upload a file to iCloud Drive and return a public share link."
-    },
-    {
-      "name": "compose_email",
-      "description": "Open compose window pre-filled."
-    },
-    {
-      "name": "reply_to_message",
-      "description": "Open reply window."
-    },
-    {
-      "name": "forward_message",
-      "description": "Open forward window."
-    },
-    {
-      "name": "quick_reply",
-      "description": "SENDS IMMEDIATELY."
-    },
-    {
-      "name": "send_email",
-      "description": "SENDS IMMEDIATELY without compose window."
-    },
-    {
-      "name": "save_as_draft",
-      "description": "Save email as draft without opening compose window."
-    },
-    {
-      "name": "list_drafts",
-      "description": "List drafts."
-    },
-    {
-      "name": "create_folder",
-      "description": "Create a new folder."
-    },
-    {
-      "name": "rename_folder",
-      "description": "Rename a folder."
-    },
-    {
-      "name": "delete_folder",
-      "description": "Delete a custom folder."
-    },
-    {
-      "name": "analyze_email_history",
-      "description": "Scan sent folder to build behavior profile (tone, contacts, topics)."
-    },
-    {
-      "name": "batch_triage_inbox",
-      "description": "Inbox messages with suggested actions (reply/archive/star/defer) and priority scores."
-    },
-    {
-      "name": "get_user_profile",
-      "description": "Get user behavior profile: reply patterns, contacts, templates."
-    },
-    {
-      "name": "update_user_profile",
-      "description": "Update profile: custom instructions, reply tone/length, add/remove templates."
-    },
-    {
-      "name": "suggest_folder",
-      "description": "Suggest folder for a message based on learned move patterns."
-    },
-    {
-      "name": "get_behavior_stats",
-      "description": "Behavior tracker stats: total actions, top sender→folder and domain rules."
-    },
-    {
-      "name": "list_calendars",
-      "description": "List calendars (IDs, titles, types)."
-    },
-    {
-      "name": "list_events",
-      "description": "List events in date range (default next 7 days)."
-    },
-    {
-      "name": "get_event",
-      "description": "Get event details: attendees, alarms, recurrence, notes."
-    },
-    {
-      "name": "create_event",
-      "description": "Create calendar event."
-    },
-    {
-      "name": "update_event",
-      "description": "Update event."
-    },
-    {
-      "name": "delete_event",
-      "description": "Delete event."
-    },
-    {
-      "name": "list_reminders",
-      "description": "List reminders."
-    },
-    {
-      "name": "create_reminder",
-      "description": "Create reminder."
-    },
-    {
-      "name": "complete_reminder",
-      "description": "Mark reminder completed/uncompleted."
-    },
-    {
-      "name": "delete_reminder",
-      "description": "Delete reminder."
-    },
-    {
-      "name": "list_contacts_book",
-      "description": "List address book contacts."
-    },
-    {
-      "name": "get_contact",
-      "description": "Get full contact details."
-    },
-    {
-      "name": "search_contacts_book",
-      "description": "Search contacts by name or email."
-    },
-    {
-      "name": "create_contact",
-      "description": "Create a contact."
-    },
-    {
-      "name": "update_contact",
-      "description": "Update contact."
-    },
-    {
-      "name": "delete_contact",
-      "description": "Delete a contact."
-    },
-    {
-      "name": "list_contact_groups",
-      "description": "List contact groups."
-    },
-    {
-      "name": "list_vips",
-      "description": "List VIP senders."
-    },
-    {
-      "name": "add_vip",
-      "description": "Add a sender to VIP list."
-    },
-    {
-      "name": "remove_vip",
-      "description": "Remove a sender from VIP list."
-    },
-    {
-      "name": "list_blocked",
-      "description": "List blocked senders."
-    },
-    {
-      "name": "add_blocked",
-      "description": "Block a sender."
-    },
-    {
-      "name": "remove_blocked",
-      "description": "Unblock a sender."
-    },
-    {
-      "name": "get_preferences",
-      "description": "Read app preferences."
-    },
-    {
-      "name": "set_preferences",
-      "description": "Modify app preferences."
     },
     {
       "name": "list_rules",
