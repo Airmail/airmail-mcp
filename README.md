@@ -172,6 +172,28 @@ To find your token: open Airmail → **Preferences → MCP** → copy the **Auth
 ### Meta
 `manage_capabilities` — enable/disable tool groups to reduce context usage
 
+## Tool groups
+
+Tools are organized into capability groups that can be enabled or disabled at runtime via `manage_capabilities`. This reduces context usage by hiding tools you don't need.
+
+| Group | Tools | Default |
+|-------|-------|---------|
+| mail | Email read, actions, compose | Always on |
+| profile | User profile, triage, behavior stats | On |
+| folders | Folder CRUD | On |
+| semantic | Semantic search, index status | On |
+| calendar | Calendar events, reminders | On |
+| contacts | Address book | On |
+| preferences | App preferences | On |
+| rules | Email rules | On |
+| lists | VIP & blocked senders | On |
+| smartfolders | Smart folder CRUD | On |
+| signatures | Email signatures | On |
+| aliases | Email aliases | On |
+| accountsettings | Per-account settings, vacation | On |
+
+To enable all groups, ask the AI to call `manage_capabilities` with `enable: ["preferences", "rules", "lists", "smartfolders", "signatures", "aliases", "accountsettings"]`.
+
 ## How it works
 
 ```

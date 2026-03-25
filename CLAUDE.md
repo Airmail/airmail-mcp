@@ -32,6 +32,18 @@ npm run sync-tools     # sync tool defs from Swift source → manifest.json
 5. Creates a GitHub Release
 6. GitHub Actions publishes to npm via OIDC (no token needed)
 
+## Tool architecture (Swift side)
+
+Tools are statically compiled into Airmail's binary. There is no plugin system or config file — adding a tool requires Swift code changes.
+
+Two independent access control layers:
+- **Capability groups** — control visibility in `tools/list`. Toggled at runtime via `manage_capabilities`. Disabling a group hides tools but does NOT block execution.
+- **Permissions** — control execution. Three levels: `allow` (immediate), `ask` (macOS alert), `blocked` (rejected). Configured in Airmail Preferences → MCP.
+
+`sync-tools.mjs` auto-discovers all `AMZMCP*Tools.swift` files — no hardcoded list. New tool files are picked up automatically.
+
+Dispatch uses chain-of-responsibility: `AMZMCPToolRouter.dispatch()` tries each module's `handle(name:arguments:)` in sequence. First non-nil result wins.
+
 ## Key details
 
 - `prepublishOnly` runs `sync-tools` which needs local Swift sources — CI uses `--ignore-scripts` to skip it
