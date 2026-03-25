@@ -29,6 +29,11 @@ const TOOL_FILES = [
   "AMZMCPProfileTools.swift",  // profile tools
   "AMZMCPCalendarTools.swift", // calendar + reminder tools
   "AMZMCPContactTools.swift",  // contact tools
+  "AMZMCPListsTools.swift",    // lists tools
+  "AMZMCPPreferenceTools.swift", // preference tools
+  "AMZMCPRulesTools.swift",    // rules tools
+  "AMZMCPSignatureTools.swift", // signature tools
+  "AMZMCPSmartFolderTools.swift", // smart folder tools
 ];
 
 /**

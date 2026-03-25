@@ -305,6 +305,90 @@
     {
       "name": "list_contact_groups",
       "description": "List contact groups."
+    },
+    {
+      "name": "list_vips",
+      "description": "List VIP senders."
+    },
+    {
+      "name": "add_vip",
+      "description": "Add a sender to VIP list."
+    },
+    {
+      "name": "remove_vip",
+      "description": "Remove a sender from VIP list."
+    },
+    {
+      "name": "list_blocked",
+      "description": "List blocked senders."
+    },
+    {
+      "name": "add_blocked",
+      "description": "Block a sender."
+    },
+    {
+      "name": "remove_blocked",
+      "description": "Unblock a sender."
+    },
+    {
+      "name": "get_preferences",
+      "description": "Read app preferences."
+    },
+    {
+      "name": "set_preferences",
+      "description": "Modify app preferences."
+    },
+    {
+      "name": "list_rules",
+      "description": "List all email rules with name, guid, enabled, conditions/actions summary, direction."
+    },
+    {
+      "name": "get_rule",
+      "description": "Get full details of a rule: conditions, actions, shortcut, order."
+    },
+    {
+      "name": "create_rule",
+      "description": "Create a new email rule."
+    },
+    {
+      "name": "delete_rule",
+      "description": "Delete a rule by GUID."
+    },
+    {
+      "name": "toggle_rule",
+      "description": "Enable or disable a rule."
+    },
+    {
+      "name": "list_signatures",
+      "description": "List email signatures."
+    },
+    {
+      "name": "create_signature",
+      "description": "Create a new email signature for an account."
+    },
+    {
+      "name": "update_signature",
+      "description": "Update a signature name, HTML body, or default status."
+    },
+    {
+      "name": "delete_signature",
+      "description": "Delete a signature."
+    },
+    {
+      "name": "list_smart_folders",
+      "description": "List smart folders with uuid, name, search query."
+    },
+    {
+      "name": "create_smart_folder",
+      "description": "Create a smart folder with a search query (same syntax as search_messages)."
+    },
+    {
+      "name": "update_smart_folder",
+      "description": "Update a smart folder name and/or search query."
+    },
+    {
+      "name": "delete_smart_folder",
+      "description": "Delete a smart folder."
     }
   ],
   "keywords": [
