@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npm whoami:*)",
+      "Bash(npm publish:*)",
+      "Bash(npm pkg fix:*)",
+      "Bash(npm view:*)",
+      "WebFetch(domain:docs.npmjs.com)",
+      "WebSearch",
+      "WebFetch(domain:dev.to)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(chmod:*)",
+      "Bash(gh release create:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(npm version:*)",
+      "Bash(./scripts/release.sh:*)"
+    ]
+  }
+}
