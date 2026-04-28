@@ -1,4 +1,6 @@
-# Airmail MCP
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Overview
 
@@ -17,10 +19,13 @@ AI Client ←stdio→ src/index.ts (Node.js) ←HTTP→ Airmail.app (localhost:9
 ## Commands
 
 ```bash
-npm run build          # compile TypeScript
+npm run build          # compile TypeScript → dist/
+npm run watch          # tsc --watch
 npm run sync-tools     # sync tool defs from Swift source → manifest.json
-./scripts/release.sh   # sync + build + bump + commit + push + GitHub release
+./scripts/release.sh [patch|minor|major]   # full release; must be on main branch
 ```
+
+There is no test suite and no linter configured. Don't invent `npm test` / `npm run lint` invocations.
 
 ## Release flow
 
