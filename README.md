@@ -12,6 +12,68 @@ This is a lightweight bridge that connects AI clients to Airmail's built-in MCP 
 
 ## Installation
 
+### Local development build
+
+Use this when testing changes from a local checkout before publishing a new npm version.
+
+```bash
+git clone https://github.com/Airmail/airmail-mcp.git
+cd airmail-mcp
+npm install
+npm run build
+```
+
+Then point your MCP client at the compiled local bridge. Do not commit a machine-specific path in shared docs or config examples; use your own checkout path.
+
+**Codex CLI / Codex Desktop**:
+
+```bash
+codex mcp remove airmail
+codex mcp add airmail -- node "$(pwd)/dist/index.js"
+```
+
+**Claude Desktop JSON only**:
+
+```json
+{
+  "mcpServers": {
+    "airmail": {
+      "command": "node",
+      "args": ["/absolute/path/to/airmail-mcp/dist/index.js"]
+    }
+  }
+}
+```
+
+You can also smoke-test the local stdio bridge without installing it into a client:
+
+```bash
+printf '%s\n' \
+'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-05","capabilities":{},"clientInfo":{"name":"Airmail MCP Local Test","version":"1.0"}}}' \
+'{"jsonrpc":"2.0","method":"notifications/initialized"}' \
+'{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_inbox","arguments":{"limit":3}}}' \
+| node dist/index.js
+```
+
+Restart the MCP client after changing its config. On first connection, Airmail shows an authorization prompt; click **Allow**.
+
+Important: `npx -y airmail-mcp` installs the published npm package, not this local checkout. Use the local `node "$(pwd)/dist/index.js"` command until the package is published.
+
+### GitHub development install
+
+Use this when you want the MCP client to install from GitHub instead of a local checkout. This tests pushed GitHub code, not uncommitted local edits.
+
+```bash
+codex mcp remove airmail
+codex mcp add airmail -- npx -y github:Airmail/airmail-mcp#main
+```
+
+Replace `main` with a branch name, tag, or commit SHA when testing a specific version:
+
+```bash
+codex mcp add airmail -- npx -y github:Airmail/airmail-mcp#branch-name
+```
+
 ### Claude Desktop (MCPB extension)
 
 Install from the [Claude MCP Directory](https://claude.ai/mcp) or download the latest `.mcpb` file from [Releases](https://github.com/Airmail/airmail-mcp/releases) and double-click to install.
