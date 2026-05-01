@@ -1,6 +1,6 @@
 {
   "name": "airmail-mcp",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "mcpName": "io.github.airmail/airmail-mcp",
   "description": "Manage emails, calendars, contacts, and more from Claude using Airmail's MCP server.",
   "main": "dist/index.js",
@@ -18,6 +18,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "sync-tools": "node scripts/sync-tools.mjs",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run sync-tools && npm run build"
   },
   "keywords": [

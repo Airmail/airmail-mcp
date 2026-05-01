@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "airmail-mcp",
   "display_name": "Airmail",
-  "version": "1.0.0",
+  "version": "1.0.15",
   "description": "Manage emails, calendars, contacts, and more from Claude using Airmail's MCP server.",
   "long_description": "Airmail MCP connects Claude to the Airmail email client for macOS. Read, search, compose, and organize emails. Manage calendars and reminders. Search contacts. The bridge connects locally to Airmail on your Mac. Data retrieved by AI tools is processed by your chosen AI provider.",
   "author": {
@@ -27,8 +27,8 @@
         "${__dirname}/dist/index.js"
       ],
       "env": {
-        "AIRMAIL_MCP_TOKEN": "${user_config.auth_token}",
-        "AIRMAIL_MCP_PORT": "${user_config.port}"
+        "AIRMAIL_MCP_PORT": "${user_config.port}",
+        "AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN": "${user_config.remember_client_token}"
       }
     }
   },
@@ -438,19 +438,18 @@
   ],
   "license": "MIT",
   "user_config": {
-    "auth_token": {
-      "type": "string",
-      "title": "Auth Token",
-      "description": "Bearer token from Airmail Preferences > MCP. If not set, the bridge will try to read it from the macOS Keychain (requires user approval).",
-      "sensitive": true,
-      "required": false
-    },
     "port": {
       "type": "string",
       "title": "MCP Server Port",
       "description": "Port number for Airmail's local MCP server. Only change if you modified the default port in Airmail.",
       "required": false,
       "default": "9876"
+    },
+    "remember_client_token": {
+      "type": "string",
+      "title": "Remember Client Token",
+      "description": "Set to 1 to persist the bridge's per-client pairing token in Keychain. Leave empty for memory-only tokens.",
+      "required": false
     }
   },
   "compatibility": {
