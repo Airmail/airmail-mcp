@@ -58,5 +58,7 @@ Commands: `message`, `open`, `compose`, `reply`, `draft`, `archive`, `delete`, `
 ## Key details
 
 - `prepublishOnly` runs `sync-tools` which needs local Swift sources — CI uses `--ignore-scripts` to skip it
-- Auth token is read from macOS Keychain automatically; `AIRMAIL_MCP_TOKEN` env var overrides
+- Default auth uses Airmail's per-client pairing flow; the bridge keeps its client token in memory for the current process
+- `AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN=1` persists the bridge client token under Keychain service `com.airmail.mcp.client`
+- `AIRMAIL_MCP_TOKEN` remains an explicit bearer-token override for manual/debug use
 - Package published under npm account `airmailapp` via GitHub Actions OIDC Trusted Publishing

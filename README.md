@@ -12,6 +12,68 @@ This is a lightweight bridge that connects AI clients to Airmail's built-in MCP 
 
 ## Installation
 
+### Local development build
+
+Use this when testing changes from a local checkout before publishing a new npm version.
+
+```bash
+git clone https://github.com/Airmail/airmail-mcp.git
+cd airmail-mcp
+npm install
+npm run build
+```
+
+Then point your MCP client at the compiled local bridge. Do not commit a machine-specific path in shared docs or config examples; use your own checkout path.
+
+**Codex CLI / Codex Desktop**:
+
+```bash
+codex mcp remove airmail
+codex mcp add airmail -- node "$(pwd)/dist/index.js"
+```
+
+**Claude Desktop JSON only**:
+
+```json
+{
+  "mcpServers": {
+    "airmail": {
+      "command": "node",
+      "args": ["/absolute/path/to/airmail-mcp/dist/index.js"]
+    }
+  }
+}
+```
+
+You can also smoke-test the local stdio bridge without installing it into a client:
+
+```bash
+printf '%s\n' \
+'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-05","capabilities":{},"clientInfo":{"name":"Airmail MCP Local Test","version":"1.0"}}}' \
+'{"jsonrpc":"2.0","method":"notifications/initialized"}' \
+'{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_inbox","arguments":{"limit":3}}}' \
+| node dist/index.js
+```
+
+Restart the MCP client after changing its config. On first connection, Airmail shows an authorization prompt; click **Allow**.
+
+Important: `npx -y airmail-mcp` installs the published npm package, not this local checkout. Use the local `node "$(pwd)/dist/index.js"` command until the package is published.
+
+### GitHub development install
+
+Use this when you want the MCP client to install from GitHub instead of a local checkout. This tests pushed GitHub code, not uncommitted local edits.
+
+```bash
+codex mcp remove airmail
+codex mcp add airmail -- npx -y github:Airmail/airmail-mcp#main
+```
+
+Replace `main` with a branch name, tag, or commit SHA when testing a specific version:
+
+```bash
+codex mcp add airmail -- npx -y github:Airmail/airmail-mcp#branch-name
+```
+
 ### Claude Desktop (MCPB extension)
 
 Install from the [Claude MCP Directory](https://claude.ai/mcp) or download the latest `.mcpb` file from [Releases](https://github.com/Airmail/airmail-mcp/releases) and double-click to install.
@@ -31,7 +93,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-The auth token is read automatically from the macOS Keychain. If you set `AIRMAIL_MCP_TOKEN`, the Keychain is not accessed:
+On first use, Airmail shows a pairing prompt and issues a per-client token for this bridge. By default that token stays only in bridge memory for the current session. If you set `AIRMAIL_MCP_TOKEN`, pairing is skipped and the provided bearer token is used directly:
 
 ```json
 {
@@ -112,15 +174,15 @@ Add to `.vscode/mcp.json` in your project:
 
 ## Authentication
 
-The bridge reads the auth token automatically from the macOS Keychain — no configuration needed. When macOS prompts for Keychain access, click **Always Allow** so it won't ask again.
+On first use, the bridge asks Airmail to pair this MCP client. Airmail shows an authorization prompt, then returns a per-client token. By default, the bridge keeps that token only in memory for the current process.
 
-If you set `AIRMAIL_MCP_TOKEN`, the Keychain is skipped entirely:
+The bridge does not read Airmail's master MCP token from Keychain. If you set `AIRMAIL_MCP_TOKEN`, pairing is skipped and that token is used directly:
 
 ```bash
 export AIRMAIL_MCP_TOKEN="your-token-here"
 ```
 
-To find your token: open Airmail → **Preferences → MCP** → copy the **Auth Token**.
+To find the optional master token: open Airmail -> **Preferences -> MCP** -> copy the **Auth Token**.
 
 ## Tools (98)
 
@@ -228,7 +290,8 @@ If Airmail is not running, the bridge will attempt to launch it automatically.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AIRMAIL_MCP_TOKEN` | Auth token (optional — automatically read from macOS Keychain if not set) | — |
+| `AIRMAIL_MCP_TOKEN` | Optional bearer token override. If omitted, the bridge uses Airmail's per-client pairing flow. | — |
+| `AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN` | Set to `1` to persist the bridge's per-client token in Keychain service `com.airmail.mcp.client`. | — |
 | `AIRMAIL_MCP_PORT` | MCP server port | `9876` |
 
 ## Development

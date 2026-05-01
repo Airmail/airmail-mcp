@@ -13,6 +13,7 @@
  */
 
 import { execFileSync, spawnSync } from "child_process";
+import { createHash } from "crypto";
 import { readFileSync, writeSync } from "fs";
 import * as net from "net";
 import { dirname, join } from "path";
@@ -39,11 +40,14 @@ const VERSION = (() => {
   } catch { return "0.0.0"; }
 })();
 let currentToken = "";
+let tokenProvidedByEnv = false;
+let clientTokenPromise: Promise<void> | null = null;
 
 const RETRY_DELAY_MS = 2000;
 const MAX_LAUNCH_RETRIES = 5;
 const REQUEST_TIMEOUT_MS = 120_000;
 const MAX_STDIN_BUFFER = 10 * 1024 * 1024; // 10 MB — matches server limit
+const REMEMBER_CLIENT_TOKEN = /^(1|true|yes)$/i.test(process.env.AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN ?? "");
 
 /** Resolve parent process code signing Team ID (macOS only). */
 let parentCodeSignTeamID: string | null = null;
@@ -62,7 +66,7 @@ function resolveParentCodeSign(): void {
     if (appIdx !== -1) {
       appPath = parentPath.slice(0, appIdx + 4);
     }
-    parentPhysicalIdentity = appPath;
+    parentPhysicalIdentity = appIdx !== -1 ? `app:${appPath}` : `path:${parentPath}`;
 
     // codesign writes everything to stderr — use spawnSync to capture it
     const result = spawnSync("codesign", ["-dv", "--verbose=2", appPath], {
@@ -99,25 +103,58 @@ function sanitizeHeaderValue(value: string): string {
   return value.replace(/[\r\n]/g, "");
 }
 
-function readTokenFromKeychain(): string {
+function splitClientIdentity(clientName: string): { name: string; version: string } {
+  const idx = clientName.indexOf("/");
+  if (idx === -1) {
+    return { name: clientName || "airmail-mcp", version: VERSION };
+  }
+  const name = clientName.slice(0, idx) || "airmail-mcp";
+  const version = clientName.slice(idx + 1) || VERSION;
+  return { name, version };
+}
+
+function canonicalClientName(clientName: string): string {
+  return splitClientIdentity(clientName).name;
+}
+
+function clientTokenAccount(clientName: string): string {
+  const identity = parentPhysicalIdentity ?? "unknown";
+  const hash = createHash("sha256").update(`${canonicalClientName(clientName)}|${identity}`).digest("hex").slice(0, 24);
+  return `airmail-mcp:${hash}`;
+}
+
+function readClientToken(clientName: string): string {
   try {
-    const token = execFileSync("security", [
+    return execFileSync("security", [
       "find-generic-password",
-      "-s", "com.airmail.mcp",
-      "-a", "com.airmail.mcp.token",
+      "-s", "com.airmail.mcp.client",
+      "-a", clientTokenAccount(clientName),
       "-w",
     ], { encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] }).trim();
-    if (token) {
-      log("Auth token read from macOS Keychain.");
-    }
-    return token;
   } catch {
-    log(
-      "Could not read auth token from macOS Keychain. " +
-      "macOS may prompt you to approve Keychain access — click \"Always Allow\" to avoid this next time. " +
-      "Alternatively, set the AIRMAIL_MCP_TOKEN environment variable."
-    );
     return "";
+  }
+}
+
+function saveClientToken(clientName: string, token: string): void {
+  execFileSync("security", [
+    "add-generic-password",
+    "-U",
+    "-s", "com.airmail.mcp.client",
+    "-a", clientTokenAccount(clientName),
+    "-w", token,
+  ], { stdio: ["pipe", "pipe", "pipe"] });
+}
+
+function deleteClientToken(clientName: string): void {
+  try {
+    execFileSync("security", [
+      "delete-generic-password",
+      "-s", "com.airmail.mcp.client",
+      "-a", clientTokenAccount(clientName),
+    ], { stdio: ["pipe", "pipe", "pipe"] });
+  } catch {
+    // Missing token is fine.
   }
 }
 
@@ -342,6 +379,106 @@ function forward(body: string, clientName: string, token: string, hasId: boolean
   });
 }
 
+async function pairClient(clientName: string): Promise<string> {
+  if (!parentPhysicalIdentity) {
+    throw new Error("Cannot pair without a stable parent process identity.");
+  }
+
+  const client = splitClientIdentity(clientName);
+  const body = JSON.stringify({
+    client_name: client.name,
+    client_version: client.version,
+    physical_identity: parentPhysicalIdentity,
+    team_id: parentCodeSignTeamID ?? "",
+  });
+
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (!settled) { settled = true; sock.destroy(); reject(new Error("Pairing timed out")); }
+    }, REQUEST_TIMEOUT_MS);
+
+    function finish(err?: Error) {
+      clearTimeout(timer);
+      if (settled) return;
+      settled = true;
+      if (err && chunks.length === 0) { reject(err); return; }
+      const parsed = parseHttpResponse(Buffer.concat(chunks));
+      if (!parsed) { reject(new Error("Malformed pairing response from Airmail")); return; }
+      if (parsed.statusCode >= 400) {
+        reject(new Error(`Pairing failed (HTTP ${parsed.statusCode}): ${parsed.body.slice(0, 200)}`));
+        return;
+      }
+      try {
+        const json = JSON.parse(parsed.body) as { client_token?: string };
+        if (!json.client_token) { reject(new Error("Pairing response did not include a client token")); return; }
+        resolve(json.client_token);
+      } catch {
+        reject(new Error("Pairing response was not JSON"));
+      }
+    }
+
+    const sock = net.createConnection({ host: AIRMAIL_HOST, port: AIRMAIL_PORT }, () => {
+      const bodyBuf = Buffer.from(body, "utf-8");
+      let reqHeaders = `POST /mcp/pair HTTP/1.1\r\n`;
+      reqHeaders += `Host: ${AIRMAIL_HOST}:${AIRMAIL_PORT}\r\n`;
+      reqHeaders += `Content-Type: application/json\r\n`;
+      reqHeaders += `Content-Length: ${bodyBuf.length}\r\n`;
+      reqHeaders += `Accept: application/json\r\n`;
+      reqHeaders += `Connection: close\r\n`;
+      reqHeaders += `User-Agent: airmail-mcp/${VERSION}\r\n`;
+      reqHeaders += `X-MCP-Client: ${sanitizeHeaderValue(client.name)}\r\n`;
+      reqHeaders += `X-MCP-Physical-Identity: ${sanitizeHeaderValue(parentPhysicalIdentity ?? "")}\r\n`;
+      if (parentCodeSignTeamID) {
+        reqHeaders += `X-MCP-CodeSign: ${sanitizeHeaderValue(parentCodeSignTeamID)}\r\n`;
+      }
+      reqHeaders += `\r\n`;
+      sock.write(Buffer.concat([Buffer.from(reqHeaders), bodyBuf]));
+    });
+
+    sock.on("data", (chunk) => chunks.push(chunk));
+    sock.on("end", () => finish());
+    sock.on("error", (err) => finish(err));
+    sock.on("close", () => finish());
+  });
+}
+
+async function ensureClientToken(clientName: string): Promise<void> {
+  if (currentToken) return;
+  if (clientTokenPromise) {
+    await clientTokenPromise;
+    return;
+  }
+
+  clientTokenPromise = (async () => {
+    if (REMEMBER_CLIENT_TOKEN) {
+      const storedToken = readClientToken(clientName);
+      if (storedToken) {
+        currentToken = storedToken;
+        log("Client token loaded from bridge Keychain.");
+        return;
+      }
+    }
+
+    log("No client token found; requesting pairing approval from Airmail.");
+    const token = await pairClient(clientName);
+    currentToken = token;
+    if (REMEMBER_CLIENT_TOKEN) {
+      saveClientToken(clientName, token);
+      log("Client token saved to bridge Keychain.");
+    } else {
+      log("Client token kept in memory for this bridge session.");
+    }
+  })();
+
+  try {
+    await clientTokenPromise;
+  } finally {
+    clientTokenPromise = null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // stdio ↔ HTTP bridge
 // ---------------------------------------------------------------------------
@@ -354,13 +491,13 @@ let initialized = false;
 /** Queue of messages waiting for initialize to complete. */
 let pendingAfterInit: string[] = [];
 
-async function processMessage(line: string): Promise<void> {
+async function processMessage(line: string): Promise<boolean> {
   let parsed: { id?: unknown; method?: string; params?: Record<string, unknown> };
   try {
     parsed = JSON.parse(line);
   } catch {
     log(`Invalid JSON: ${line.slice(0, 200)}`);
-    return;
+    return false;
   }
 
   const hasId = parsed.id !== undefined;
@@ -374,35 +511,40 @@ async function processMessage(line: string): Promise<void> {
   }
 
   try {
-    const response = await forward(line, resolvedClientName, currentToken, hasId);
+    const authClientName = canonicalClientName(resolvedClientName);
+    if (!tokenProvidedByEnv) {
+      await ensureClientToken(authClientName);
+    }
+    const response = await forward(line, authClientName, currentToken, hasId);
 
     if (response) {
       process.stdout.write(response + "\n");
     }
+    return true;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
 
-    // Re-read token from Keychain on 401 and retry once
+    // Client token may have been revoked or bound to an old identity; re-pair once.
     if (msg.includes("HTTP 401")) {
-      if (!process.env.AIRMAIL_MCP_TOKEN) {
-        const newToken = readTokenFromKeychain();
-        if (newToken && newToken !== currentToken) {
-          log("Token rotated in Keychain, retrying with new token.");
-          currentToken = newToken;
-          try {
-            const response = await forward(line, resolvedClientName, currentToken, hasId);
-            if (response) { process.stdout.write(response + "\n"); }
-            return;
-          } catch {
-            // Fall through to error handling
-          }
+      if (!tokenProvidedByEnv) {
+        const authClientName = canonicalClientName(resolvedClientName);
+        if (REMEMBER_CLIENT_TOKEN) {
+          deleteClientToken(authClientName);
+        }
+        currentToken = "";
+        try {
+          await ensureClientToken(authClientName);
+          const response = await forward(line, authClientName, currentToken, hasId);
+          if (response) { process.stdout.write(response + "\n"); }
+          return true;
+        } catch {
+          // Fall through to error handling
         }
       }
       log(
         "Authentication failed (HTTP 401). The auth token is missing or invalid.\n" +
-        "  \u2192 Open Airmail \u2192 Preferences \u2192 MCP and copy the current Auth Token\n" +
-        "  \u2192 Set it as: export AIRMAIL_MCP_TOKEN=\"your-token-here\"\n" +
-        "  \u2192 Or approve the macOS Keychain access prompt if it appears."
+        "  \u2192 If using AIRMAIL_MCP_TOKEN, refresh it from Airmail Preferences > MCP.\n" +
+        "  \u2192 Otherwise approve the Airmail pairing prompt."
       );
     }
 
@@ -416,6 +558,7 @@ async function processMessage(line: string): Promise<void> {
     } else {
       log(`Notification error: ${msg}`);
     }
+    return false;
   }
 }
 
@@ -427,6 +570,8 @@ async function main() {
     process.exit(1);
   }
 
+  resolveParentCodeSign();
+
   // Resolve auth token — done inside main() so logs are captured
   const envToken = (process.env.AIRMAIL_MCP_TOKEN ?? "").trim();
   // Skip env var if empty or unresolved template placeholder
@@ -437,25 +582,15 @@ async function main() {
 
   if (isValidEnvToken) {
     currentToken = envToken;
+    tokenProvidedByEnv = true;
     log(`Auth token provided via AIRMAIL_MCP_TOKEN (${envToken.length} chars).`);
   } else {
     if (envToken) log(`AIRMAIL_MCP_TOKEN ignored (placeholder: "${envToken.slice(0, 20)}...").`);
-    log("Trying macOS Keychain...");
-    currentToken = readTokenFromKeychain();
+    log(`No AIRMAIL_MCP_TOKEN provided; bridge will use per-client pairing (${REMEMBER_CLIENT_TOKEN ? "remembered Keychain token" : "memory-only token"}).`);
   }
 
-  if (!currentToken) {
-    log(
-      "WARNING: no auth token found. Requests will fail with 401.\n" +
-      "  1. Open Airmail \u2192 Preferences \u2192 MCP and copy the Auth Token\n" +
-      "  2. Set it as: export AIRMAIL_MCP_TOKEN=\"your-token-here\"\n" +
-      "  Or approve the macOS Keychain prompt when it appears."
-    );
-  }
-
-  resolveParentCodeSign();
   await ensureAirmailRunning();
-  log(`Bridge ready \u2014 Airmail MCP at ${AIRMAIL_HOST}:${AIRMAIL_PORT} (token: ${currentToken ? "present" : "MISSING"})`);
+  log(`Bridge ready \u2014 Airmail MCP at ${AIRMAIL_HOST}:${AIRMAIL_PORT} (${tokenProvidedByEnv ? "env token" : "pairing mode"})`);
 
   // Handle stdout errors (broken pipe)
   process.stdout.on("error", (err) => {
@@ -482,7 +617,7 @@ async function main() {
 
   let buffer = "";
   let stdinClosed = false;
-  const inflight = new Set<Promise<void>>();
+  const inflight = new Set<Promise<unknown>>();
 
   function enqueue(line: string) {
     const p = processMessage(line).catch((err) => log(`Error: ${err}`));
@@ -525,7 +660,8 @@ async function main() {
 
         if (parsed.method === "initialize") {
           const p = processMessage(line)
-            .then(() => {
+            .then((ok) => {
+              if (!ok) throw new Error("initialize failed");
               initialized = true;
               // Flush queued messages
               for (const queued of pendingAfterInit) { enqueue(queued); }

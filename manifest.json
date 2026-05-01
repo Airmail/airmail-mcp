@@ -28,7 +28,8 @@
       ],
       "env": {
         "AIRMAIL_MCP_TOKEN": "${user_config.auth_token}",
-        "AIRMAIL_MCP_PORT": "${user_config.port}"
+        "AIRMAIL_MCP_PORT": "${user_config.port}",
+        "AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN": "${user_config.remember_client_token}"
       }
     }
   },
@@ -441,7 +442,7 @@
     "auth_token": {
       "type": "string",
       "title": "Auth Token",
-      "description": "Bearer token from Airmail Preferences > MCP. If not set, the bridge will try to read it from the macOS Keychain (requires user approval).",
+      "description": "Optional bearer token from Airmail Preferences > MCP. If not set, the bridge uses Airmail's per-client pairing flow.",
       "sensitive": true,
       "required": false
     },
@@ -451,6 +452,12 @@
       "description": "Port number for Airmail's local MCP server. Only change if you modified the default port in Airmail.",
       "required": false,
       "default": "9876"
+    },
+    "remember_client_token": {
+      "type": "string",
+      "title": "Remember Client Token",
+      "description": "Set to 1 to persist the bridge's per-client pairing token in Keychain. Leave empty for memory-only tokens.",
+      "required": false
     }
   },
   "compatibility": {
