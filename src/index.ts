@@ -47,6 +47,8 @@ const MAX_STDIN_BUFFER = 10 * 1024 * 1024; // 10 MB — matches server limit
 
 /** Resolve parent process code signing Team ID (macOS only). */
 let parentCodeSignTeamID: string | null = null;
+let parentPhysicalIdentity: string | null = null;
+let parentBundleIdentifier: string | null = null;
 function resolveParentCodeSign(): void {
   try {
     const ppid = process.ppid;
@@ -60,6 +62,7 @@ function resolveParentCodeSign(): void {
     if (appIdx !== -1) {
       appPath = parentPath.slice(0, appIdx + 4);
     }
+    parentPhysicalIdentity = appPath;
 
     // codesign writes everything to stderr — use spawnSync to capture it
     const result = spawnSync("codesign", ["-dv", "--verbose=2", appPath], {
@@ -67,6 +70,11 @@ function resolveParentCodeSign(): void {
       stdio: ["pipe", "pipe", "pipe"],
     });
     const output = (result.stdout || "") + (result.stderr || "");
+    const identifierMatch = output.match(/Identifier=(\S+)/);
+    if (identifierMatch) {
+      parentBundleIdentifier = identifierMatch[1];
+      log(`Parent identity: ${parentBundleIdentifier} (${parentPhysicalIdentity})`);
+    }
     const match = output.match(/TeamIdentifier=(\S+)/);
     if (match && match[1] !== "not" && match[1] !== "not set") {
       parentCodeSignTeamID = match[1];
@@ -312,6 +320,12 @@ function forward(body: string, clientName: string, token: string, hasId: boolean
         reqHeaders += `Authorization: Bearer ${sanitizeHeaderValue(token)}\r\n`;
       }
       reqHeaders += `X-MCP-Client: ${safeClient}\r\n`;
+      if (parentPhysicalIdentity) {
+        reqHeaders += `X-MCP-Physical-Identity: ${sanitizeHeaderValue(parentPhysicalIdentity)}\r\n`;
+      }
+      if (parentBundleIdentifier) {
+        reqHeaders += `X-MCP-Bundle-ID: ${sanitizeHeaderValue(parentBundleIdentifier)}\r\n`;
+      }
       if (parentCodeSignTeamID) {
         reqHeaders += `X-MCP-CodeSign: ${sanitizeHeaderValue(parentCodeSignTeamID)}\r\n`;
       }
