@@ -93,21 +93,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-On first use, Airmail shows a pairing prompt and issues a per-client token for this bridge. By default that token stays only in bridge memory for the current session. If you set `AIRMAIL_MCP_TOKEN`, pairing is skipped and the provided bearer token is used directly:
-
-```json
-{
-  "mcpServers": {
-    "airmail": {
-      "command": "npx",
-      "args": ["-y", "airmail-mcp"],
-      "env": {
-        "AIRMAIL_MCP_TOKEN": "your-token-here"
-      }
-    }
-  }
-}
-```
+On first use, Airmail shows a pairing prompt and issues a per-client token for this bridge. By default that token stays only in bridge memory for the current session.
 
 ### Claude Code
 
@@ -176,13 +162,7 @@ Add to `.vscode/mcp.json` in your project:
 
 On first use, the bridge asks Airmail to pair this MCP client. Airmail shows an authorization prompt, then returns a per-client token. By default, the bridge keeps that token only in memory for the current process.
 
-The bridge does not read Airmail's master MCP token from Keychain. If you set `AIRMAIL_MCP_TOKEN`, pairing is skipped and that token is used directly:
-
-```bash
-export AIRMAIL_MCP_TOKEN="your-token-here"
-```
-
-To find the optional master token: open Airmail -> **Preferences -> MCP** -> copy the **Auth Token**.
+Airmail MCP does not use a global auth token. Access is pairing-only and can be revoked per client in Airmail's MCP Permissions tab.
 
 ## Tools (98)
 
@@ -290,7 +270,6 @@ If Airmail is not running, the bridge will attempt to launch it automatically.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `AIRMAIL_MCP_TOKEN` | Optional bearer token override. If omitted, the bridge uses Airmail's per-client pairing flow. | — |
 | `AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN` | Set to `1` to persist the bridge's per-client token in Keychain service `com.airmail.mcp.client`. | — |
 | `AIRMAIL_MCP_PORT` | MCP server port | `9876` |
 

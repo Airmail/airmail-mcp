@@ -27,7 +27,6 @@
         "${__dirname}/dist/index.js"
       ],
       "env": {
-        "AIRMAIL_MCP_TOKEN": "${user_config.auth_token}",
         "AIRMAIL_MCP_PORT": "${user_config.port}",
         "AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN": "${user_config.remember_client_token}"
       }
@@ -439,13 +438,6 @@
   ],
   "license": "MIT",
   "user_config": {
-    "auth_token": {
-      "type": "string",
-      "title": "Auth Token",
-      "description": "Optional bearer token from Airmail Preferences > MCP. If not set, the bridge uses Airmail's per-client pairing flow.",
-      "sensitive": true,
-      "required": false
-    },
     "port": {
       "type": "string",
       "title": "MCP Server Port",

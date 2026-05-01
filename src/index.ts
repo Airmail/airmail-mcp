@@ -40,7 +40,6 @@ const VERSION = (() => {
   } catch { return "0.0.0"; }
 })();
 let currentToken = "";
-let tokenProvidedByEnv = false;
 let clientTokenPromise: Promise<void> | null = null;
 
 const RETRY_DELAY_MS = 2000;
@@ -512,9 +511,7 @@ async function processMessage(line: string): Promise<boolean> {
 
   try {
     const authClientName = canonicalClientName(resolvedClientName);
-    if (!tokenProvidedByEnv) {
-      await ensureClientToken(authClientName);
-    }
+    await ensureClientToken(authClientName);
     const response = await forward(line, authClientName, currentToken, hasId);
 
     if (response) {
@@ -526,25 +523,22 @@ async function processMessage(line: string): Promise<boolean> {
 
     // Client token may have been revoked or bound to an old identity; re-pair once.
     if (msg.includes("HTTP 401")) {
-      if (!tokenProvidedByEnv) {
-        const authClientName = canonicalClientName(resolvedClientName);
-        if (REMEMBER_CLIENT_TOKEN) {
-          deleteClientToken(authClientName);
-        }
-        currentToken = "";
-        try {
-          await ensureClientToken(authClientName);
-          const response = await forward(line, authClientName, currentToken, hasId);
-          if (response) { process.stdout.write(response + "\n"); }
-          return true;
-        } catch {
-          // Fall through to error handling
-        }
+      const authClientName = canonicalClientName(resolvedClientName);
+      if (REMEMBER_CLIENT_TOKEN) {
+        deleteClientToken(authClientName);
+      }
+      currentToken = "";
+      try {
+        await ensureClientToken(authClientName);
+        const response = await forward(line, authClientName, currentToken, hasId);
+        if (response) { process.stdout.write(response + "\n"); }
+        return true;
+      } catch {
+        // Fall through to error handling
       }
       log(
-        "Authentication failed (HTTP 401). The auth token is missing or invalid.\n" +
-        "  \u2192 If using AIRMAIL_MCP_TOKEN, refresh it from Airmail Preferences > MCP.\n" +
-        "  \u2192 Otherwise approve the Airmail pairing prompt."
+        "Authentication failed (HTTP 401). The client pairing token is missing, invalid, or revoked.\n" +
+        "  \u2192 Approve the Airmail pairing prompt, or revoke the client in Airmail Preferences > MCP > Permissions and pair again."
       );
     }
 
@@ -572,25 +566,10 @@ async function main() {
 
   resolveParentCodeSign();
 
-  // Resolve auth token — done inside main() so logs are captured
-  const envToken = (process.env.AIRMAIL_MCP_TOKEN ?? "").trim();
-  // Skip env var if empty or unresolved template placeholder
-  const isValidEnvToken = envToken.length > 0
-    && !envToken.startsWith("${")
-    && envToken !== "undefined"
-    && envToken !== "null";
-
-  if (isValidEnvToken) {
-    currentToken = envToken;
-    tokenProvidedByEnv = true;
-    log(`Auth token provided via AIRMAIL_MCP_TOKEN (${envToken.length} chars).`);
-  } else {
-    if (envToken) log(`AIRMAIL_MCP_TOKEN ignored (placeholder: "${envToken.slice(0, 20)}...").`);
-    log(`No AIRMAIL_MCP_TOKEN provided; bridge will use per-client pairing (${REMEMBER_CLIENT_TOKEN ? "remembered Keychain token" : "memory-only token"}).`);
-  }
+  log(`Bridge will use per-client pairing (${REMEMBER_CLIENT_TOKEN ? "remembered Keychain token" : "memory-only token"}).`);
 
   await ensureAirmailRunning();
-  log(`Bridge ready \u2014 Airmail MCP at ${AIRMAIL_HOST}:${AIRMAIL_PORT} (${tokenProvidedByEnv ? "env token" : "pairing mode"})`);
+  log(`Bridge ready \u2014 Airmail MCP at ${AIRMAIL_HOST}:${AIRMAIL_PORT} (pairing mode)`);
 
   // Handle stdout errors (broken pipe)
   process.stdout.on("error", (err) => {
