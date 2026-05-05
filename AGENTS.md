@@ -8,7 +8,7 @@ This repository is a thin Node.js bridge between MCP clients and Airmail's nativ
 - `scripts/sync-tools.mjs`: generates `manifest.json` from local Airmail Swift sources.
 - `manifest.json`: packaged tool metadata.
 - `scripts/release.sh`: release automation for version bump, push, and GitHub release.
-- `logo.png`, `README.md`, and `CLAUDE.md`: package metadata and contributor context.
+- `logo.png`, `README.md`, `AGENTS.md`, and `CLAUDE.md`: package metadata and contributor context.
 
 Build output goes to `dist/` and should be treated as generated code.
 
@@ -32,6 +32,6 @@ There is currently no automated test suite. For changes, verify by running `npm 
 
 ## Commit & Pull Request Guidelines
 
-Recent history favors short, imperative subjects, for example `Release v1.0.14`, `Sync 98 tools — add get_navigation_link`, or `Remove .claude from tracking, add to gitignore`. Keep commit messages specific and avoid placeholder subjects.
+Use short, imperative subjects and a body that explains behavior, release, or compatibility impact. Keep commit messages specific; avoid placeholder subjects like `fix`, `update`, or `changes`.
 
 PRs should include a brief summary, note any user-visible behavior changes, mention manifest or release-script updates when applicable, and link the related issue. Include screenshots only if documentation or packaging assets changed.

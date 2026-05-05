@@ -25,7 +25,7 @@ echo "==> Bumping version ($BUMP)..."
 NEW_VERSION=$(npm version "$BUMP" --no-git-tag-version)
 
 echo "==> Committing..."
-git add package.json manifest.json scripts/ src/ .github/
+git add package.json package-lock.json manifest.json README.md scripts/ src/ .github/
 git commit -m "Release $NEW_VERSION"
 
 echo "==> Pushing..."

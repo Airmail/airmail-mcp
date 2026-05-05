@@ -13,7 +13,7 @@ AI Client ←stdio→ src/index.ts (Node.js) ←HTTP→ Airmail.app (localhost:9
 ```
 
 - **src/index.ts** — the bridge. Uses raw TCP sockets (not http module) because Airmail's NWListener closes connections immediately after sending.
-- **scripts/sync-tools.mjs** — parses Swift source files to extract tool definitions into manifest.json. Requires local Airmail Swift sources at `../airmailmac/PostinoNG191/PostinoNG/SwiftCore/MCP`.
+- **scripts/sync-tools.mjs** — parses Swift source files to extract tool definitions into manifest.json. By default it reads `../PostinoNG191/PostinoNG/SwiftCore/MCP`; pass a path argument or set `AIRMAIL_MCP_SWIFT_DIR` for a different checkout layout.
 - **manifest.json** — tool definitions used by the MCPB extension format.
 
 ## Commands
@@ -51,7 +51,7 @@ Dispatch uses chain-of-responsibility: `AMZMCPToolRouter.dispatch()` tries each 
 
 ## Deep links
 
-MCP tools return `airmail://` URLs in responses. These open Airmail to the relevant content (message, composer, folder, attachment, settings). Deep link builders live in `AMZMCPBridge.swift`. Full reference in the Airmail source at `SwiftCore/MCP/docs/DEEPLINKS.md`.
+MCP tools return `airmailmcp://` URLs in responses. These open Airmail to the relevant content (message, composer, folder, attachment, settings). Airmail still accepts `airmail://` for legacy links, but MCP/AI traffic should use `airmailmcp://`. Deep link builders live in `AMZMCPBridge.swift`. Full reference in the Airmail source at `SwiftCore/MCP/docs/DEEPLINKS.md`.
 
 Commands: `message`, `open`, `compose`, `reply`, `draft`, `archive`, `delete`, `view`, `attachment`, `settings`, `send`.
 
@@ -60,5 +60,6 @@ Commands: `message`, `open`, `compose`, `reply`, `draft`, `archive`, `delete`, `
 - `prepublishOnly` runs `sync-tools` which needs local Swift sources — CI uses `--ignore-scripts` to skip it
 - Default auth uses Airmail's per-client pairing flow; the bridge keeps its client token in memory for the current process
 - `AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN=1` persists the bridge client token under Keychain service `com.airmail.mcp.client`
+- `AIRMAIL_MCP_AUTO_LAUNCH=1` lets the bridge open Airmail when the local MCP server is unreachable; default is no auto-launch
 - There is no global Airmail MCP auth token; bridge access is pairing-only and revocable per client
 - Package published under npm account `airmailapp` via GitHub Actions OIDC Trusted Publishing
