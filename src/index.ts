@@ -58,39 +58,105 @@ const AUTO_LAUNCH_AIRMAIL = envFlag("AIRMAIL_MCP_AUTO_LAUNCH");
 let parentCodeSignTeamID: string | null = null;
 let parentPhysicalIdentity: string | null = null;
 let parentBundleIdentifier: string | null = null;
-function resolveParentCodeSign(): void {
+
+interface ProcessInfo {
+  pid: number;
+  ppid: number;
+  command: string;
+}
+
+interface CodeSignInfo {
+  identifier: string | null;
+  teamID: string | null;
+}
+
+function processInfo(pid: number): ProcessInfo | null {
   try {
-    const ppid = process.ppid;
-    // Get parent executable path — ppid is always numeric, safe for arg
-    const parentPath = execFileSync("ps", ["-p", String(ppid), "-o", "comm="], { encoding: "utf-8" }).trim();
-    if (!parentPath) return;
-
-    // Walk up to find .app bundle (if any)
-    let appPath = parentPath;
-    const appIdx = parentPath.indexOf(".app/");
-    if (appIdx !== -1) {
-      appPath = parentPath.slice(0, appIdx + 4);
-    }
-    parentPhysicalIdentity = appIdx !== -1 ? `app:${appPath}` : `path:${parentPath}`;
-
-    // codesign writes everything to stderr — use spawnSync to capture it
-    const result = spawnSync("codesign", ["-dv", "--verbose=2", appPath], {
-      encoding: "utf-8",
-      stdio: ["pipe", "pipe", "pipe"],
-    });
-    const output = (result.stdout || "") + (result.stderr || "");
-    const identifierMatch = output.match(/Identifier=(\S+)/);
-    if (identifierMatch) {
-      parentBundleIdentifier = identifierMatch[1];
-      log(`Parent identity: ${parentBundleIdentifier} (${parentPhysicalIdentity})`);
-    }
-    const match = output.match(/TeamIdentifier=(\S+)/);
-    if (match && match[1] !== "not" && match[1] !== "not set") {
-      parentCodeSignTeamID = match[1];
-      log(`Parent code sign: Team ID ${parentCodeSignTeamID}`);
-    }
+    const ppidText = execFileSync("ps", ["-p", String(pid), "-o", "ppid="], { encoding: "utf-8" }).trim();
+    const command = execFileSync("ps", ["-p", String(pid), "-o", "comm="], { encoding: "utf-8" }).trim();
+    const ppid = parseInt(ppidText, 10);
+    if (!command || isNaN(ppid)) return null;
+    return { pid, ppid, command };
   } catch {
-    // Not code-signed or codesign not available — leave as null
+    return null;
+  }
+}
+
+function appBundlePath(executablePath: string): string {
+  const appIdx = executablePath.indexOf(".app/");
+  return appIdx === -1 ? executablePath : executablePath.slice(0, appIdx + 4);
+}
+
+function physicalIdentityForPath(path: string): string {
+  return path.endsWith(".app") ? `app:${path}` : `path:${path}`;
+}
+
+function codesignInfo(path: string): CodeSignInfo {
+  const result = spawnSync("codesign", ["-dv", "--verbose=2", path], {
+    encoding: "utf-8",
+    stdio: ["pipe", "pipe", "pipe"],
+  });
+  const output = (result.stdout || "") + (result.stderr || "");
+  const identifier = output.match(/Identifier=(\S+)/)?.[1] ?? null;
+  const rawTeam = output.match(/TeamIdentifier=(.+)/)?.[1]?.trim() ?? null;
+  const teamID = rawTeam && rawTeam !== "not set" && rawTeam !== "not" ? rawTeam : null;
+  return { identifier, teamID };
+}
+
+function assignParentIdentity(path: string, sign: CodeSignInfo): void {
+  parentPhysicalIdentity = physicalIdentityForPath(path);
+  parentBundleIdentifier = sign.identifier;
+  parentCodeSignTeamID = sign.teamID;
+  if (parentBundleIdentifier) {
+    log(`Parent identity: ${parentBundleIdentifier} (${parentPhysicalIdentity})`);
+  }
+  if (parentCodeSignTeamID) {
+    log(`Parent code sign: Team ID ${parentCodeSignTeamID}`);
+  } else {
+    log(`Parent code sign: unsigned (${parentPhysicalIdentity})`);
+  }
+}
+
+function resolveParentCodeSign(): void {
+  let fallback: { path: string; sign: CodeSignInfo } | null = null;
+  let unsignedApp: { path: string; sign: CodeSignInfo } | null = null;
+
+  for (let pid = process.ppid, depth = 0; pid > 1 && depth < 16; depth++) {
+    const info = processInfo(pid);
+    if (!info) break;
+
+    const path = appBundlePath(info.command);
+    const sign = codesignInfo(path);
+
+    if (!fallback) {
+      fallback = { path, sign };
+    }
+
+    // Prefer a signed app bundle. With npx, the immediate parent is usually
+    // node/npm, so the real client identity is one or more ancestors above it.
+    if (path.endsWith(".app") && sign.teamID) {
+      assignParentIdentity(path, sign);
+      return;
+    }
+
+    // If no signed bundle exists, an app bundle is still more stable than
+    // transient npm/node helper paths.
+    if (path.endsWith(".app") && !unsignedApp) {
+      unsignedApp = { path, sign };
+    }
+
+    // Signed command-line tools are useful, but less specific than app bundles.
+    if (!path.endsWith(".app") && sign.teamID) {
+      fallback = { path, sign };
+    }
+
+    pid = info.ppid;
+  }
+
+  if (unsignedApp) {
+    assignParentIdentity(unsignedApp.path, unsignedApp.sign);
+  } else if (fallback) {
+    assignParentIdentity(fallback.path, fallback.sign);
   }
 }
 
