@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "airmail-mcp",
   "display_name": "Airmail",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Manage emails, calendars, contacts, and more from Claude using Airmail's MCP server.",
   "long_description": "Airmail MCP connects Claude to the Airmail email client for macOS. Read, search, compose, and organize emails. Manage calendars and reminders. Search contacts. The bridge connects locally to Airmail on your Mac. Data retrieved by AI tools is processed by your chosen AI provider.",
   "author": {
@@ -309,19 +309,19 @@
     },
     {
       "name": "list_starred",
-      "description": "List starred/flagged messages."
+      "description": "List starred/flagged messages (date desc)."
     },
     {
       "name": "list_sent",
-      "description": "List sent messages."
+      "description": "List sent messages (date desc)."
     },
     {
       "name": "list_trash",
-      "description": "List trash messages."
+      "description": "List trash messages (date desc)."
     },
     {
       "name": "list_spam",
-      "description": "List spam/junk messages."
+      "description": "List spam/junk messages (date desc)."
     },
     {
       "name": "search_messages",
