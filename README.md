@@ -264,7 +264,8 @@ This package is a thin transport bridge. All tool logic runs inside Airmail's na
 2. Forwards them via HTTP POST to Airmail's local MCP server
 3. Writes responses back to stdout
 
-If Airmail is not running, the bridge will attempt to launch it automatically.
+If Airmail is not running, the bridge exits with a clear error by default. Set
+`AIRMAIL_MCP_AUTO_LAUNCH=1` if you want the bridge to open Airmail automatically.
 
 ## Environment variables
 
@@ -272,6 +273,7 @@ If Airmail is not running, the bridge will attempt to launch it automatically.
 |----------|-------------|---------|
 | `AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN` | Set to `1` to persist the bridge's per-client token in Keychain service `com.airmail.mcp.client`. | — |
 | `AIRMAIL_MCP_PORT` | MCP server port | `9876` |
+| `AIRMAIL_MCP_AUTO_LAUNCH` | Set to `1`/`true` to launch Airmail when the local MCP server is not reachable | `0` |
 
 ## Development
 

@@ -24,6 +24,11 @@ import { fileURLToPath } from "url";
 // ---------------------------------------------------------------------------
 
 const AIRMAIL_HOST = "127.0.0.1";
+function envFlag(name: string): boolean {
+  const value = (process.env[name] ?? "").trim().toLowerCase();
+  return value === "1" || value === "true" || value === "yes" || value === "on";
+}
+
 const AIRMAIL_PORT = (() => {
   const p = parseInt(process.env.AIRMAIL_MCP_PORT ?? "9876", 10);
   if (isNaN(p) || p < 1 || p > 65535) {
@@ -47,6 +52,7 @@ const MAX_LAUNCH_RETRIES = 5;
 const REQUEST_TIMEOUT_MS = 120_000;
 const MAX_STDIN_BUFFER = 10 * 1024 * 1024; // 10 MB — matches server limit
 const REMEMBER_CLIENT_TOKEN = /^(1|true|yes)$/i.test(process.env.AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN ?? "");
+const AUTO_LAUNCH_AIRMAIL = envFlag("AIRMAIL_MCP_AUTO_LAUNCH");
 
 /** Resolve parent process code signing Team ID (macOS only). */
 let parentCodeSignTeamID: string | null = null;
@@ -178,7 +184,15 @@ function ping(): Promise<boolean> {
 
 async function ensureAirmailRunning(): Promise<void> {
   if (await ping()) return;
-  log("Airmail MCP server not reachable, launching Airmail...");
+  if (!AUTO_LAUNCH_AIRMAIL) {
+    log(
+      "Airmail MCP server is not reachable. Open Airmail and enable MCP in Preferences, " +
+      "or set AIRMAIL_MCP_AUTO_LAUNCH=1 to let the bridge launch Airmail."
+    );
+    process.exit(1);
+  }
+
+  log("Airmail MCP server not reachable, launching Airmail because AIRMAIL_MCP_AUTO_LAUNCH=1...");
   try {
     execFileSync("open", ["-a", "Airmail"], { stdio: "ignore" });
   } catch {
