@@ -164,7 +164,7 @@ On first use, the bridge asks Airmail to pair this MCP client. Airmail shows an 
 
 Airmail MCP does not use a global auth token. Access is pairing-only and can be revoked per client in Airmail's MCP Permissions tab.
 
-## Tools (98)
+## Tools (101)
 
 ### Email (core)
 `list_accounts` · `list_folders` · `list_messages` · `get_message` · `list_inbox` · `list_starred` · `list_sent` · `list_trash` · `list_spam` · `search_messages` · `fetch_message_body` · `list_attachments` · `get_attachment` · `get_unread_counts` · `search_contacts` · `get_draft` · `delete_draft` · `get_message_thread` · `list_windows` · `export_eml`

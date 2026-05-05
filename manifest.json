@@ -40,6 +40,10 @@
       "description": "Enable/disable tool groups to manage context."
     },
     {
+      "name": "start_convo",
+      "description": "Start a new conversation session and get a convo_id for request correlation."
+    },
+    {
       "name": "get_account_settings",
       "description": "Get per-account settings."
     },
@@ -362,6 +366,14 @@
     {
       "name": "export_eml",
       "description": "Export message as .eml (RFC 822) file saved to disk (returns file_path)."
+    },
+    {
+      "name": "list_operations",
+      "description": "List current email operations (move, copy, delete, send, etc.) with their status (planned, executing, executed, failed, canceled, reverted)."
+    },
+    {
+      "name": "list_activity",
+      "description": "List current email connections and sync activity."
     },
     {
       "name": "semantic_search",

@@ -242,12 +242,18 @@ function extractTools(source) {
 }
 
 function main() {
-  const swiftDir =
-    process.argv[2] ||
-    join(ROOT, "..", "airmailmac", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP");
+  const swiftDirCandidates = [
+    join(ROOT, "..", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP"),
+    join(ROOT, "..", "airmailmac", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP"),
+  ];
+  const swiftDir = process.argv[2] || swiftDirCandidates.find(existsSync) || swiftDirCandidates[0];
 
   if (!existsSync(swiftDir)) {
     console.error(`Swift source directory not found: ${swiftDir}`);
+    console.error("Tried:");
+    for (const candidate of swiftDirCandidates) {
+      console.error(`  - ${candidate}`);
+    }
     console.error("Pass the path as an argument: node scripts/sync-tools.mjs /path/to/MCP");
     process.exit(1);
   }
