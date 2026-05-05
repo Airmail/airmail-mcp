@@ -242,18 +242,13 @@ function extractTools(source) {
 }
 
 function main() {
-  const swiftDirCandidates = [
-    join(ROOT, "..", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP"),
-    join(ROOT, "..", "airmailmac", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP"),
-  ];
-  const swiftDir = process.argv[2] || swiftDirCandidates.find(existsSync) || swiftDirCandidates[0];
+  const defaultSwiftDir = join(ROOT, "..", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP");
+  const swiftDir = process.argv[2] || process.env.AIRMAIL_MCP_SWIFT_DIR || defaultSwiftDir;
 
   if (!existsSync(swiftDir)) {
     console.error(`Swift source directory not found: ${swiftDir}`);
-    console.error("Tried:");
-    for (const candidate of swiftDirCandidates) {
-      console.error(`  - ${candidate}`);
-    }
+    console.error(`Default path: ${defaultSwiftDir}`);
+    console.error("Or set AIRMAIL_MCP_SWIFT_DIR to the SwiftCore/MCP directory.");
     console.error("Pass the path as an argument: node scripts/sync-tools.mjs /path/to/MCP");
     process.exit(1);
   }
