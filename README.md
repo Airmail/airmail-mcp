@@ -12,6 +12,17 @@ This is a lightweight bridge that connects AI clients to Airmail's built-in MCP 
 
 ## Installation
 
+### Published npm package
+
+`npx` installs and runs the published package automatically. Users do not need to clone this repository or run `npm install`.
+
+```bash
+codex mcp remove airmail
+codex mcp add airmail -- npx -y airmail-mcp
+```
+
+Use this for normal installs after the desired version has been published to npm.
+
 ### Local development build
 
 Use this when testing changes from a local checkout before publishing a new npm version.
@@ -237,20 +248,20 @@ To enable all groups, ask the AI to call `manage_capabilities` with `enable: ["p
 
 ## Deep links
 
-MCP tool responses include `airmail://` deep links that open Airmail directly to the relevant content.
+MCP tool responses include `airmailmcp://` deep links that open Airmail directly to the relevant content.
 
 | Command | URL | Description |
 |---------|-----|-------------|
-| `message` | `airmail://message?mail=...&messageid=...` | Select message in main window |
-| `open` | `airmail://open?mail=...&messageid=...` | Open message in reader window |
-| `compose` | `airmail://compose?to=...&subject=...` | Open composer with pre-filled content |
-| `reply` | `airmail://reply?mail=...&messageid=...` | Reply to a message |
-| `draft` | `airmail://draft?mail=...&messageid=...` | Open draft in composer |
-| `archive` | `airmail://archive?mail=...&messageid=...` | Archive a message |
-| `delete` | `airmail://delete?mail=...&messageid=...` | Move message to trash |
-| `view` | `airmail://view?mail=...&folder=...` | Navigate to account/folder |
-| `attachment` | `airmail://attachment?mail=...&messageid=...&index=0` | Open an attachment |
-| `settings` | `airmail://settings?pref=mcp_server` | Open Preferences pane |
+| `message` | `airmailmcp://message?mail=...&messageid=...` | Select message in main window |
+| `open` | `airmailmcp://open?mail=...&messageid=...` | Open message in reader window |
+| `compose` | `airmailmcp://compose?to=...&subject=...` | Open composer with pre-filled content |
+| `reply` | `airmailmcp://reply?mail=...&messageid=...` | Reply to a message |
+| `draft` | `airmailmcp://draft?mail=...&messageid=...` | Open draft in composer |
+| `archive` | `airmailmcp://archive?mail=...&messageid=...` | Archive a message |
+| `delete` | `airmailmcp://delete?mail=...&messageid=...` | Move message to trash |
+| `view` | `airmailmcp://view?mail=...&folder=...` | Navigate to account/folder |
+| `attachment` | `airmailmcp://attachment?mail=...&messageid=...&index=0` | Open an attachment |
+| `settings` | `airmailmcp://settings?pref=mcp_server` | Open Preferences pane |
 
 ## How it works
 

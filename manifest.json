@@ -385,7 +385,7 @@
     },
     {
       "name": "get_navigation_link",
-      "description": "Get an airmail:// deep link to navigate the user to a specific part of Airmail."
+      "description": "Get an airmailmcp:// deep link to navigate the user to a specific part of Airmail."
     },
     {
       "name": "list_rules",
