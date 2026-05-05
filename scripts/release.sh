@@ -23,10 +23,17 @@ npm run build
 
 echo "==> Bumping version ($BUMP)..."
 NEW_VERSION=$(npm version "$BUMP" --no-git-tag-version)
+NEW_VERSION_NUMBER=${NEW_VERSION#v}
+
+echo "==> Syncing manifest version..."
+node -e "const fs=require('fs'); const manifest=JSON.parse(fs.readFileSync('manifest.json','utf8')); manifest.version=process.argv[1]; fs.writeFileSync('manifest.json', JSON.stringify(manifest, null, 2) + '\n');" "$NEW_VERSION_NUMBER"
+
+echo "==> Rebuilding package..."
+npm run build
 
 echo "==> Committing..."
 git add package.json package-lock.json manifest.json README.md scripts/ src/ .github/
-git commit -m "Release $NEW_VERSION"
+git commit -m "Release $NEW_VERSION" -m "Sync generated MCP metadata, package metadata, and build output for the npm/GitHub release."
 
 echo "==> Pushing..."
 git push origin main

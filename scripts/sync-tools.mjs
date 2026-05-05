@@ -6,7 +6,7 @@
  * Usage:
  *   node scripts/sync-tools.mjs [path-to-MCP-swift-dir]
  *
- * Default Swift source path: ../airmailmac/PostinoNG191/PostinoNG/SwiftCore/MCP
+ * Default Swift source path: ../PostinoNG191/PostinoNG/SwiftCore/MCP
  *
  * Parses Tool(...) definitions from the Swift files and updates
  * the "tools" array in manifest.json. Run before `npm publish`.
