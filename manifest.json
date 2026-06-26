@@ -324,10 +324,6 @@
       "description": "List spam/junk messages (date desc)."
     },
     {
-      "name": "search_messages",
-      "description": "Search emails with hybrid FTS + semantic engine."
-    },
-    {
       "name": "fetch_message_body",
       "description": "Trigger server body download."
     },
@@ -357,7 +353,7 @@
     },
     {
       "name": "get_attachment",
-      "description": "Get the content of a specific attachment."
+      "description": "Get a specific attachment."
     },
     {
       "name": "list_windows",
@@ -438,6 +434,14 @@
     {
       "name": "delete_smart_folder",
       "description": "Delete a smart folder."
+    },
+    {
+      "name": "list_user_guides",
+      "description": "List Airmail's built-in user guides (every Settings tab plus task/feature guides)."
+    },
+    {
+      "name": "get_user_guide",
+      "description": "Read one Airmail user guide by slug (from list_user_guides), returned as Markdown."
     }
   ],
   "keywords": [

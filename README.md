@@ -175,7 +175,7 @@ On first use, the bridge asks Airmail to pair this MCP client. Airmail shows an 
 
 Airmail MCP does not use a global auth token. Access is pairing-only and can be revoked per client in Airmail's MCP Permissions tab.
 
-## Tools (101)
+## Tools (102)
 
 ### Email (core)
 `list_accounts` · `list_folders` · `list_messages` · `get_message` · `list_inbox` · `list_starred` · `list_sent` · `list_trash` · `list_spam` · `search_messages` · `fetch_message_body` · `list_attachments` · `get_attachment` · `get_unread_counts` · `search_contacts` · `get_draft` · `delete_draft` · `get_message_thread` · `list_windows` · `export_eml`
@@ -222,6 +222,9 @@ Airmail MCP does not use a global auth token. Access is pairing-only and can be 
 ### Preferences
 `get_preferences` · `set_preferences`
 
+### Documentation
+`list_user_guides` · `get_user_guide`
+
 ### Meta
 `manage_capabilities` — enable/disable tool groups to reduce context usage
 
@@ -244,6 +247,7 @@ Tools are organized into capability groups that can be enabled or disabled at ru
 | signatures | email signature CRUD | On |
 | aliases | email alias CRUD | On |
 | accountsettings | per-account settings & vacation | On |
+| documentation | built-in user guides (read-only) | On |
 To enable all groups, ask the AI to call `manage_capabilities` with `enable: ["preferences", "rules", "lists", "smartfolders", "signatures", "aliases", "accountsettings"]`.
 
 ## Deep links
