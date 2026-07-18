@@ -175,6 +175,12 @@ On first use, the bridge asks Airmail to pair this MCP client. Airmail shows an 
 
 Airmail MCP does not use a global auth token. Access is pairing-only and can be revoked per client in Airmail's MCP Permissions tab.
 
+## Example prompts
+
+- "Summarize my unread inbox and highlight messages that require an urgent response."
+- "Find messages about the upcoming product launch, group them by topic, and give me links to open the relevant messages in Airmail."
+- "Find the latest email from Sarah and open a reply thanking her and proposing Tuesday at 10:00 AM. Do not send it."
+
 ## Tools (102)
 
 ### Email (core)
@@ -289,6 +295,40 @@ If Airmail is not running, the bridge exits with a clear error by default. Set
 | `AIRMAIL_MCP_REMEMBER_CLIENT_TOKEN` | Set to `1` to persist the bridge's per-client token in Keychain service `com.airmail.mcp.client`. | — |
 | `AIRMAIL_MCP_PORT` | MCP server port | `9876` |
 | `AIRMAIL_MCP_AUTO_LAUNCH` | Set to `1`/`true` to launch Airmail when the local MCP server is not reachable | `0` |
+
+## Troubleshooting
+
+### Airmail is unavailable
+
+Open Airmail and confirm that the MCP server is enabled in Airmail Preferences. The bridge connects only to `127.0.0.1` on port `9876` by default. If you changed the port in Airmail, set the same value in the extension configuration.
+
+### Pairing or authorization fails
+
+Open Airmail's MCP Permissions tab, remove the existing client authorization, restart Claude Desktop, and approve the new pairing request. Never share pairing tokens or include them in logs or GitHub issues.
+
+### Tools are missing
+
+Some tool groups can be disabled to reduce context usage. Ask Claude to enable the required group with `manage_capabilities`, or review the enabled capabilities in Airmail's MCP preferences.
+
+### Extension changes do not appear
+
+Rebuild the bundle, remove the old extension from Claude Desktop, install the new `.mcpb`, and restart Claude Desktop. For source checkouts, run `npm run build` before restarting the client.
+
+### Diagnosing connection problems
+
+On macOS, verify that Airmail is listening locally with:
+
+```bash
+lsof -nP -iTCP:9876 -sTCP:LISTEN
+```
+
+Enable extension developer logging in Claude Desktop and inspect the extension logs. Before sharing logs, remove email content, addresses, pairing tokens, and other personal data.
+
+For ordinary bugs, use [GitHub Issues](https://github.com/Airmail/airmail-mcp/issues). For security vulnerabilities, follow [SECURITY.md](SECURITY.md).
+
+## Directory review
+
+Anthropic reviewers can request private test access and sample data by following [REVIEWER_TESTING.md](REVIEWER_TESTING.md). Test credentials are never published in this repository or in GitHub issues.
 
 ## Development
 

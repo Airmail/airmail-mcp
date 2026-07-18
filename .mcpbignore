@@ -3,9 +3,14 @@ src
 scripts
 .idea
 .git
+.github
 *.ts
 *.map
 *.tgz
 *.mcpb
 tsconfig.json
 .gitignore
+AGENTS.md
+CLAUDE.md
+SECURITY.md
+REVIEWER_TESTING.md
