@@ -1,0 +1,1024 @@
+{
+  "tools": {
+    "manage_capabilities": {
+      "title": "Manage Capabilities",
+      "annotations": {
+        "title": "Manage Capabilities",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "start_convo": {
+      "title": "Start Conversation",
+      "annotations": {
+        "title": "Start Conversation",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    "get_account_settings": {
+      "title": "Get Account Settings",
+      "annotations": {
+        "title": "Get Account Settings",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "update_account_settings": {
+      "title": "Update Account Settings",
+      "annotations": {
+        "title": "Update Account Settings",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_vacation_settings": {
+      "title": "Get Vacation Settings",
+      "annotations": {
+        "title": "Get Vacation Settings",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "set_vacation_settings": {
+      "title": "Set Vacation Settings",
+      "annotations": {
+        "title": "Set Vacation Settings",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "mark_messages": {
+      "title": "Mark Messages",
+      "annotations": {
+        "title": "Mark Messages",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "archive_messages": {
+      "title": "Archive Messages",
+      "annotations": {
+        "title": "Archive Messages",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "trash_messages": {
+      "title": "Trash Messages",
+      "annotations": {
+        "title": "Trash Messages",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "move_messages": {
+      "title": "Move Messages",
+      "annotations": {
+        "title": "Move Messages",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "copy_messages": {
+      "title": "Copy Messages",
+      "annotations": {
+        "title": "Copy Messages",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "snooze_messages": {
+      "title": "Snooze Messages",
+      "annotations": {
+        "title": "Snooze Messages",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "add_to_list": {
+      "title": "Add To List",
+      "annotations": {
+        "title": "Add To List",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "delete_messages": {
+      "title": "Delete Messages",
+      "annotations": {
+        "title": "Delete Messages",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "empty_folder": {
+      "title": "Empty Folder",
+      "annotations": {
+        "title": "Empty Folder",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "refresh_inbox": {
+      "title": "Refresh Inbox",
+      "annotations": {
+        "title": "Refresh Inbox",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "enable_disable_account": {
+      "title": "Enable Disable Account",
+      "annotations": {
+        "title": "Enable Disable Account",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "share_icloud": {
+      "title": "Share iCloud",
+      "annotations": {
+        "title": "Share iCloud",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "list_aliases": {
+      "title": "List Aliases",
+      "annotations": {
+        "title": "List Aliases",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_alias": {
+      "title": "Create Alias",
+      "annotations": {
+        "title": "Create Alias",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "update_alias": {
+      "title": "Update Alias",
+      "annotations": {
+        "title": "Update Alias",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_alias": {
+      "title": "Delete Alias",
+      "annotations": {
+        "title": "Delete Alias",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_calendars": {
+      "title": "List Calendars",
+      "annotations": {
+        "title": "List Calendars",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_events": {
+      "title": "List Events",
+      "annotations": {
+        "title": "List Events",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_event": {
+      "title": "Get Event",
+      "annotations": {
+        "title": "Get Event",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_event": {
+      "title": "Create Event",
+      "annotations": {
+        "title": "Create Event",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "update_event": {
+      "title": "Update Event",
+      "annotations": {
+        "title": "Update Event",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_event": {
+      "title": "Delete Event",
+      "annotations": {
+        "title": "Delete Event",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_reminders": {
+      "title": "List Reminders",
+      "annotations": {
+        "title": "List Reminders",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_reminder": {
+      "title": "Create Reminder",
+      "annotations": {
+        "title": "Create Reminder",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "complete_reminder": {
+      "title": "Complete Reminder",
+      "annotations": {
+        "title": "Complete Reminder",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_reminder": {
+      "title": "Delete Reminder",
+      "annotations": {
+        "title": "Delete Reminder",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "compose_email": {
+      "title": "Compose Email",
+      "annotations": {
+        "title": "Compose Email",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "reply_to_message": {
+      "title": "Reply To Message",
+      "annotations": {
+        "title": "Reply To Message",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "forward_message": {
+      "title": "Forward Message",
+      "annotations": {
+        "title": "Forward Message",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "quick_reply": {
+      "title": "Quick Reply",
+      "annotations": {
+        "title": "Quick Reply",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "send_email": {
+      "title": "Send Email",
+      "annotations": {
+        "title": "Send Email",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "save_as_draft": {
+      "title": "Save As Draft",
+      "annotations": {
+        "title": "Save As Draft",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "list_drafts": {
+      "title": "List Drafts",
+      "annotations": {
+        "title": "List Drafts",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_contacts_book": {
+      "title": "List Contacts Book",
+      "annotations": {
+        "title": "List Contacts Book",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_contact": {
+      "title": "Get Contact",
+      "annotations": {
+        "title": "Get Contact",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "search_contacts_book": {
+      "title": "Search Contacts Book",
+      "annotations": {
+        "title": "Search Contacts Book",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_contact": {
+      "title": "Create Contact",
+      "annotations": {
+        "title": "Create Contact",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "update_contact": {
+      "title": "Update Contact",
+      "annotations": {
+        "title": "Update Contact",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_contact": {
+      "title": "Delete Contact",
+      "annotations": {
+        "title": "Delete Contact",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_contact_groups": {
+      "title": "List Contact Groups",
+      "annotations": {
+        "title": "List Contact Groups",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_folder": {
+      "title": "Create Folder",
+      "annotations": {
+        "title": "Create Folder",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "rename_folder": {
+      "title": "Rename Folder",
+      "annotations": {
+        "title": "Rename Folder",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_folder": {
+      "title": "Delete Folder",
+      "annotations": {
+        "title": "Delete Folder",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_vips": {
+      "title": "List VIPs",
+      "annotations": {
+        "title": "List VIPs",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "add_vip": {
+      "title": "Add VIP",
+      "annotations": {
+        "title": "Add VIP",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "remove_vip": {
+      "title": "Remove VIP",
+      "annotations": {
+        "title": "Remove VIP",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_blocked": {
+      "title": "List Blocked",
+      "annotations": {
+        "title": "List Blocked",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "add_blocked": {
+      "title": "Add Blocked",
+      "annotations": {
+        "title": "Add Blocked",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "remove_blocked": {
+      "title": "Remove Blocked",
+      "annotations": {
+        "title": "Remove Blocked",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_preferences": {
+      "title": "Get Preferences",
+      "annotations": {
+        "title": "Get Preferences",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "set_preferences": {
+      "title": "Set Preferences",
+      "annotations": {
+        "title": "Set Preferences",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "analyze_email_history": {
+      "title": "Analyze Email History",
+      "annotations": {
+        "title": "Analyze Email History",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "batch_triage_inbox": {
+      "title": "Batch Triage Inbox",
+      "annotations": {
+        "title": "Batch Triage Inbox",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_user_profile": {
+      "title": "Get User Profile",
+      "annotations": {
+        "title": "Get User Profile",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "update_user_profile": {
+      "title": "Update User Profile",
+      "annotations": {
+        "title": "Update User Profile",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "suggest_folder": {
+      "title": "Suggest Folder",
+      "annotations": {
+        "title": "Suggest Folder",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_behavior_stats": {
+      "title": "Get Behavior Stats",
+      "annotations": {
+        "title": "Get Behavior Stats",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "list_accounts": {
+      "title": "List Accounts",
+      "annotations": {
+        "title": "List Accounts",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_folders": {
+      "title": "List Folders",
+      "annotations": {
+        "title": "List Folders",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_messages": {
+      "title": "List Messages",
+      "annotations": {
+        "title": "List Messages",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_message": {
+      "title": "Get Message",
+      "annotations": {
+        "title": "Get Message",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_inbox": {
+      "title": "List Inbox",
+      "annotations": {
+        "title": "List Inbox",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_starred": {
+      "title": "List Starred",
+      "annotations": {
+        "title": "List Starred",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_sent": {
+      "title": "List Sent",
+      "annotations": {
+        "title": "List Sent",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_trash": {
+      "title": "List Trash",
+      "annotations": {
+        "title": "List Trash",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_spam": {
+      "title": "List Spam",
+      "annotations": {
+        "title": "List Spam",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "fetch_message_body": {
+      "title": "Fetch Message Body",
+      "annotations": {
+        "title": "Fetch Message Body",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_attachments": {
+      "title": "List Attachments",
+      "annotations": {
+        "title": "List Attachments",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_unread_counts": {
+      "title": "Get Unread Counts",
+      "annotations": {
+        "title": "Get Unread Counts",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "search_contacts": {
+      "title": "Search Contacts",
+      "annotations": {
+        "title": "Search Contacts",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_draft": {
+      "title": "Get Draft",
+      "annotations": {
+        "title": "Get Draft",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_draft": {
+      "title": "Delete Draft",
+      "annotations": {
+        "title": "Delete Draft",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_message_thread": {
+      "title": "Get Message Thread",
+      "annotations": {
+        "title": "Get Message Thread",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_attachment": {
+      "title": "Get Attachment",
+      "annotations": {
+        "title": "Get Attachment",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_windows": {
+      "title": "List Windows",
+      "annotations": {
+        "title": "List Windows",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "export_eml": {
+      "title": "Export EML",
+      "annotations": {
+        "title": "Export EML",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_operations": {
+      "title": "List Operations",
+      "annotations": {
+        "title": "List Operations",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "list_activity": {
+      "title": "List Activity",
+      "annotations": {
+        "title": "List Activity",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "semantic_search": {
+      "title": "Semantic Search",
+      "annotations": {
+        "title": "Semantic Search",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "semantic_index_status": {
+      "title": "Semantic Index Status",
+      "annotations": {
+        "title": "Semantic Index Status",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "get_navigation_link": {
+      "title": "Get Navigation Link",
+      "annotations": {
+        "title": "Get Navigation Link",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_rules": {
+      "title": "List Rules",
+      "annotations": {
+        "title": "List Rules",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "get_rule": {
+      "title": "Get Rule",
+      "annotations": {
+        "title": "Get Rule",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_rule": {
+      "title": "Create Rule",
+      "annotations": {
+        "title": "Create Rule",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "delete_rule": {
+      "title": "Delete Rule",
+      "annotations": {
+        "title": "Delete Rule",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "toggle_rule": {
+      "title": "Toggle Rule",
+      "annotations": {
+        "title": "Toggle Rule",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_signatures": {
+      "title": "List Signatures",
+      "annotations": {
+        "title": "List Signatures",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_signature": {
+      "title": "Create Signature",
+      "annotations": {
+        "title": "Create Signature",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "update_signature": {
+      "title": "Update Signature",
+      "annotations": {
+        "title": "Update Signature",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_signature": {
+      "title": "Delete Signature",
+      "annotations": {
+        "title": "Delete Signature",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_smart_folders": {
+      "title": "List Smart Folders",
+      "annotations": {
+        "title": "List Smart Folders",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "create_smart_folder": {
+      "title": "Create Smart Folder",
+      "annotations": {
+        "title": "Create Smart Folder",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true
+      }
+    },
+    "update_smart_folder": {
+      "title": "Update Smart Folder",
+      "annotations": {
+        "title": "Update Smart Folder",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "delete_smart_folder": {
+      "title": "Delete Smart Folder",
+      "annotations": {
+        "title": "Delete Smart Folder",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    "list_user_guides": {
+      "title": "List User Guides",
+      "annotations": {
+        "title": "List User Guides",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    "get_user_guide": {
+      "title": "Get User Guide",
+      "annotations": {
+        "title": "Get User Guide",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  }
+}

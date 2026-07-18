@@ -32,7 +32,7 @@ echo "==> Rebuilding package..."
 npm run build
 
 echo "==> Committing..."
-git add package.json package-lock.json manifest.json README.md scripts/ src/ .github/
+git add package.json package-lock.json manifest.json tool-metadata.json README.md scripts/ src/ .github/
 git commit -m "Release $NEW_VERSION" -m "Sync generated MCP metadata, package metadata, and build output for the npm/GitHub release."
 
 echo "==> Pushing..."

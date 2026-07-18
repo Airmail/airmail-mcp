@@ -11,6 +11,7 @@
   "files": [
     "dist",
     "manifest.json",
+    "tool-metadata.json",
     "logo.png",
     "LICENSE"
   ],

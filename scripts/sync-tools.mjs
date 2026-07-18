@@ -241,6 +241,104 @@ function extractTools(source) {
   return tools;
 }
 
+const acronymTitles = new Map([
+  ["mcp", "MCP"],
+  ["id", "ID"],
+  ["eml", "EML"],
+  ["vip", "VIP"],
+  ["vips", "VIPs"],
+  ["icloud", "iCloud"],
+  ["url", "URL"],
+  ["html", "HTML"],
+  ["db", "DB"],
+]);
+
+function titleFromName(name) {
+  return name
+    .split("_")
+    .map((part) => {
+      const lower = part.toLowerCase();
+      return acronymTitles.get(lower) || lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(" ")
+    .replace(/^List Vips$/, "List VIPs")
+    .replace(/^Add Vip$/, "Add VIP")
+    .replace(/^Remove Vip$/, "Remove VIP")
+    .replace(/^Share Icloud$/, "Share iCloud")
+    .replace(/^Export Eml$/, "Export EML")
+    .replace(/^Start Convo$/, "Start Conversation");
+}
+
+const readOnlyTools = new Set([
+  "get_account_settings", "get_vacation_settings", "list_aliases",
+  "list_calendars", "list_events", "get_event", "list_reminders", "list_drafts",
+  "list_contacts_book", "get_contact", "search_contacts_book", "list_contact_groups",
+  "list_vips", "list_blocked", "get_preferences", "batch_triage_inbox",
+  "get_user_profile", "suggest_folder", "get_behavior_stats", "list_accounts",
+  "list_folders", "list_messages", "get_message", "list_inbox", "list_starred",
+  "list_sent", "list_trash", "list_spam", "list_attachments", "get_unread_counts",
+  "search_contacts", "get_draft", "get_message_thread", "get_attachment",
+  "list_windows", "list_operations", "list_activity", "semantic_search",
+  "get_navigation_link", "list_rules", "get_rule", "list_signatures",
+  "list_smart_folders", "list_user_guides", "get_user_guide",
+]);
+
+const destructiveTools = new Set([
+  "delete_messages", "empty_folder", "delete_alias", "delete_event", "delete_reminder",
+  "delete_contact", "delete_folder", "remove_vip", "remove_blocked", "delete_draft",
+  "delete_rule", "delete_signature", "delete_smart_folder",
+]);
+
+const nonIdempotentTools = new Set([
+  "start_convo", "share_icloud", "create_alias", "copy_messages", "add_to_list",
+  "create_event", "create_reminder", "compose_email", "reply_to_message", "forward_message",
+  "quick_reply", "send_email", "save_as_draft", "create_contact", "create_folder",
+  "add_vip", "add_blocked", "analyze_email_history", "create_rule", "create_signature",
+  "create_smart_folder", "refresh_inbox", "semantic_index_status",
+]);
+
+const openWorldTools = new Set([
+  "get_account_settings", "update_account_settings", "get_vacation_settings", "set_vacation_settings",
+  "mark_messages", "archive_messages", "trash_messages", "move_messages", "copy_messages",
+  "snooze_messages", "add_to_list", "delete_messages", "empty_folder", "refresh_inbox",
+  "enable_disable_account", "share_icloud", "list_aliases", "create_alias", "update_alias",
+  "delete_alias", "list_calendars", "list_events", "get_event", "create_event", "update_event",
+  "delete_event", "list_reminders", "create_reminder", "complete_reminder", "delete_reminder",
+  "compose_email", "reply_to_message", "forward_message", "quick_reply", "send_email",
+  "save_as_draft", "list_drafts", "list_contacts_book", "get_contact", "search_contacts_book",
+  "create_contact", "update_contact", "delete_contact", "list_contact_groups", "create_folder",
+  "rename_folder", "delete_folder", "list_vips", "add_vip", "remove_vip", "list_blocked",
+  "add_blocked", "remove_blocked", "analyze_email_history", "batch_triage_inbox",
+  "suggest_folder", "list_accounts", "list_folders", "list_messages", "get_message",
+  "list_inbox", "list_starred", "list_sent", "list_trash", "list_spam", "fetch_message_body",
+  "list_attachments", "get_unread_counts", "search_contacts", "get_draft", "delete_draft",
+  "get_message_thread", "get_attachment", "export_eml", "semantic_search", "semantic_index_status",
+  "get_navigation_link", "list_rules", "get_rule", "create_rule", "delete_rule", "toggle_rule",
+  "list_signatures", "create_signature", "update_signature", "delete_signature",
+  "list_smart_folders", "create_smart_folder", "update_smart_folder", "delete_smart_folder",
+]);
+
+function inferredAnnotations(name, title) {
+  const readOnly = readOnlyTools.has(name) || name.startsWith("list_") || name.startsWith("get_") || name.startsWith("search_");
+  return {
+    title,
+    readOnlyHint: readOnly,
+    destructiveHint: readOnly ? false : destructiveTools.has(name),
+    idempotentHint: readOnly ? true : !nonIdempotentTools.has(name),
+    openWorldHint: openWorldTools.has(name),
+  };
+}
+
+function decorateTool(tool, existingTool) {
+  const title = existingTool?.title || titleFromName(tool.name);
+  return {
+    name: tool.name,
+    title,
+    description: tool.description,
+    annotations: existingTool?.annotations || inferredAnnotations(tool.name, title),
+  };
+}
+
 function main() {
   const defaultSwiftDir = join(ROOT, "..", "PostinoNG191", "PostinoNG", "SwiftCore", "MCP");
   const swiftDir = process.argv[2] || process.env.AIRMAIL_MCP_SWIFT_DIR || defaultSwiftDir;
@@ -299,7 +397,30 @@ function main() {
     process.exit(1);
   }
 
-  manifest.tools = allTools;
+  const metadataPath = join(ROOT, "tool-metadata.json");
+  let existingMetadata = {};
+  try {
+    const parsedMetadata = JSON.parse(readFileSync(metadataPath, "utf-8"));
+    if (parsedMetadata && typeof parsedMetadata.tools === "object") {
+      existingMetadata = parsedMetadata.tools;
+    }
+  } catch {
+    // Missing metadata file is fine; infer metadata below.
+  }
+
+  const toolMetadata = { tools: {} };
+  manifest.tools = allTools.map((tool) => {
+    const existingTool = existingMetadata[tool.name];
+    const decorated = decorateTool(tool, existingTool);
+    toolMetadata.tools[tool.name] = {
+      title: decorated.title,
+      annotations: decorated.annotations,
+    };
+    return {
+      name: tool.name,
+      description: tool.description,
+    };
+  });
 
   try {
     writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf-8");
@@ -309,6 +430,15 @@ function main() {
   }
 
   console.log(`Updated ${manifestPath}`);
+
+  try {
+    writeFileSync(metadataPath, JSON.stringify(toolMetadata, null, 2) + "\n", "utf-8");
+  } catch (err) {
+    console.error(`Failed to write tool-metadata.json: ${err.message}`);
+    process.exit(1);
+  }
+
+  console.log(`Updated ${metadataPath}`);
 
   // Extract capability groups from AMZMCPToolRouter.swift
   const routerPath = toolFiles.find(f => f.name === "AMZMCPToolRouter.swift")?.path;

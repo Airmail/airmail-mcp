@@ -44,6 +44,69 @@ const VERSION = (() => {
     return pkg.version ?? "0.0.0";
   } catch { return "0.0.0"; }
 })();
+
+interface ToolAnnotations {
+  title?: string;
+  readOnlyHint?: boolean;
+  destructiveHint?: boolean;
+  idempotentHint?: boolean;
+  openWorldHint?: boolean;
+}
+
+interface ToolMetadata {
+  title?: string;
+  annotations?: ToolAnnotations;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readBooleanField(source: Record<string, unknown>, key: keyof ToolAnnotations): boolean | undefined {
+  return typeof source[key] === "boolean" ? source[key] : undefined;
+}
+
+function sanitizeToolAnnotations(value: unknown): ToolAnnotations | undefined {
+  if (!isRecord(value)) return undefined;
+
+  const annotations: ToolAnnotations = {};
+  if (typeof value.title === "string") annotations.title = value.title;
+
+  const readOnlyHint = readBooleanField(value, "readOnlyHint");
+  const destructiveHint = readBooleanField(value, "destructiveHint");
+  const idempotentHint = readBooleanField(value, "idempotentHint");
+  const openWorldHint = readBooleanField(value, "openWorldHint");
+
+  if (readOnlyHint !== undefined) annotations.readOnlyHint = readOnlyHint;
+  if (destructiveHint !== undefined) annotations.destructiveHint = destructiveHint;
+  if (idempotentHint !== undefined) annotations.idempotentHint = idempotentHint;
+  if (openWorldHint !== undefined) annotations.openWorldHint = openWorldHint;
+
+  return Object.keys(annotations).length > 0 ? annotations : undefined;
+}
+
+function loadToolMetadata(): Map<string, ToolMetadata> {
+  const metadata = new Map<string, ToolMetadata>();
+  try {
+    const metadataPath = join(dirname(fileURLToPath(import.meta.url)), "..", "tool-metadata.json");
+    const metadataFile = JSON.parse(readFileSync(metadataPath, "utf-8")) as { tools?: unknown };
+    if (!isRecord(metadataFile.tools)) return metadata;
+
+    for (const [name, entry] of Object.entries(metadataFile.tools)) {
+      if (!isRecord(entry)) continue;
+      const title = typeof entry.title === "string" ? entry.title : undefined;
+      const annotations = sanitizeToolAnnotations(entry.annotations);
+      if (title || annotations) {
+        metadata.set(name, { title, annotations });
+      }
+    }
+  } catch {
+    // Metadata is optional; forwarding still works if tool-metadata.json is unavailable.
+  }
+  return metadata;
+}
+
+const TOOL_METADATA = loadToolMetadata();
 let currentToken = "";
 let clientTokenPromise: Promise<void> | null = null;
 
@@ -570,6 +633,44 @@ let initialized = false;
 /** Queue of messages waiting for initialize to complete. */
 let pendingAfterInit: string[] = [];
 
+function decorateToolsListResponse(response: string): string {
+  if (!response || TOOL_METADATA.size === 0) return response;
+
+  try {
+    const message = JSON.parse(response) as unknown;
+    if (!isRecord(message) || !isRecord(message.result) || !Array.isArray(message.result.tools)) {
+      return response;
+    }
+
+    let changed = false;
+    for (const tool of message.result.tools) {
+      if (!isRecord(tool) || typeof tool.name !== "string") continue;
+
+      const metadata = TOOL_METADATA.get(tool.name);
+      if (!metadata) continue;
+
+      if (metadata.title && typeof tool.title !== "string") {
+        tool.title = metadata.title;
+        changed = true;
+      }
+
+      if (metadata.annotations) {
+        const existingAnnotations = isRecord(tool.annotations) ? tool.annotations : {};
+        tool.annotations = { ...metadata.annotations, ...existingAnnotations };
+        changed = true;
+      }
+    }
+
+    return changed ? JSON.stringify(message) : response;
+  } catch {
+    return response;
+  }
+}
+
+function responseForClient(method: string | undefined, response: string): string {
+  return method === "tools/list" ? decorateToolsListResponse(response) : response;
+}
+
 async function processMessage(line: string): Promise<boolean> {
   let parsed: { id?: unknown; method?: string; params?: Record<string, unknown> };
   try {
@@ -595,7 +696,7 @@ async function processMessage(line: string): Promise<boolean> {
     const response = await forward(line, authClientName, currentToken, hasId);
 
     if (response) {
-      process.stdout.write(response + "\n");
+      process.stdout.write(responseForClient(parsed.method, response) + "\n");
     }
     return true;
   } catch (err) {
@@ -611,7 +712,7 @@ async function processMessage(line: string): Promise<boolean> {
       try {
         await ensureClientToken(authClientName);
         const response = await forward(line, authClientName, currentToken, hasId);
-        if (response) { process.stdout.write(response + "\n"); }
+        if (response) { process.stdout.write(responseForClient(parsed.method, response) + "\n"); }
         return true;
       } catch {
         // Fall through to error handling
